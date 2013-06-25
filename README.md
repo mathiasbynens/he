@@ -64,7 +64,7 @@ A string representing the semantic version number.
 
 ### `he.encode(text)`
 
-This function takes a string of text and encodes any symbols that can be replaced with named character references (e.g. `©` → `&copy;`. Additionally, it replaces any remaining non-ASCII symbols with a hexadecimal escape sequence (e.g. `&#x1D306;`).
+This function takes a string of text and encodes any symbols that aren’t printable ASCII symbols and that can be replaced with named character references. For example, it would turn `©` into `&copy;`, but it wouldn’t turn `+` into `&plus;` since there is no point in doing so. Additionally, it replaces any remaining non-ASCII symbols with a hexadecimal escape sequence (e.g. `&#x1D306;`).
 
 ```js
 he.encode('foo © bar ≠ baz 𝌆 qux');
