@@ -18,11 +18,11 @@
 	/*--------------------------------------------------------------------------*/
 
 	var regexAstralSymbols = /<%= astralSymbols %>/g;
-	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbol %>/g;
 	var regexNonASCII = /[^\0-\x7F]/g;
 	var regexDecimalEscape = /&#([0-9]+);?/g;
 	var regexHexadecimalEscape = /&#[xX]([0-9a-fA-F]+);?/g;
 	var regexNamedCharacterReference = /&([0-9a-zA-Z]+;?)/g;
+	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbol %>/g;
 	var encodeMap = <%= encodeMap %>;
 	var regexEscape = /[&<>"']/g;
 	var escapeMap = {
@@ -30,10 +30,10 @@
 		'<': '&lt;',
 		'"': '&quot;',
 		'\'': '&apos;',
-		// See http://mathiasbynens.be/notes/ambiguous-ampersands: the following
-		// is not strictly necessary unless part of a tag or an unquoted attribute
-		// value. We’re only escaping it to match existing `htmlEscape`
-		// implementations.
+		// See http://mathiasbynens.be/notes/ambiguous-ampersands: in HTML, the
+		// following is not strictly necessary unless it’s part of a tag or an
+		// unquoted attribute value. We’re only escaping it for XML support, and to
+		// match existing `htmlEscape` implementations.
 		'>': '&gt;'
 	};
 	var decodeMap = <%= decodeMap %>;
@@ -58,17 +58,13 @@
 		return output;
 	};
 
-	var escape = function(string) {
-		return string.replace(regexEscape, function($0) {
-			return escapeMap[$0]; // no need to check `has()` here
-		});
-	};
-
 	var encode = function(string) {
 		return string
+			// Apply named character references
 			.replace(regexEncode, function($0) {
 				return encodeMap[$0]; // no need to check `has()` here
 			})
+			// Encode astral symbols
 			.replace(regexAstralSymbols, function($0) {
 				// http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
 				var high = $0.charCodeAt(0);
@@ -76,7 +72,7 @@
 				var codePoint = (high - 0xD800) * 0x400 + low - 0xDC00 + 0x10000;
 				return '&#x' + codePoint.toString(16).toUpperCase() + ';';
 			})
-			// Replace other non-ASCII chars with a hexadecimal escape
+			// Encode any remaining non-ASCII symbols using a hexadecimal escape
 			.replace(regexNonASCII, function($0) {
 				return '&#x' + $0.charCodeAt(0).toString(16).toUpperCase() + ';';
 			});
@@ -84,30 +80,39 @@
 
 	var decode = function(html) {
 		return html
+			// Decode decimal escapes, e.g. `&#119558;`
 			.replace(regexDecimalEscape, function($0, codePoint) {
 				return codePointToSymbol(codePoint);
 			})
+			// Decode hexadecimal escapes, e.g. `&#x1D306;`
 			.replace(regexHexadecimalEscape, function($0, hexDigits) {
 				var codePoint = parseInt(hexDigits, 16);
 				return codePointToSymbol(codePoint);
 			})
+			// Decode named character references, e.g. `&copy;`
 			.replace(regexNamedCharacterReference, function($0, reference) {
 				if (has(decodeMap, reference)) {
 					return decodeMap[reference];
 				} else {
 					// ambiguous ampersand; see http://mths.be/notes/ambiguous-ampersands
-					return '&' + reference;
+					return $0;
 				}
 			});
 	}
+
+	var escape = function(string) {
+		return string.replace(regexEscape, function($0) {
+			return escapeMap[$0]; // no need to check `has()` here
+		});
+	};
 
 	/*--------------------------------------------------------------------------*/
 
 	var he = {
 		'version': '<%= version %>',
-		'escape': escape,
 		'encode': encode,
 		'decode': decode,
+		'escape': escape,
 		'unescape': decode
 	};
 
