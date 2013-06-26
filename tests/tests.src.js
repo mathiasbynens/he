@@ -3193,7 +3193,7 @@
 		},
 		{
 			"decoded": "a\nb",
-			"encoded": "a&NewLine;b"
+			"encoded": "a\nb" // `encode` shouldn’t insert `&NewLine;`
 		},
 		{
 			"decoded": "a\u2204b",
