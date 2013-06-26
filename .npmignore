@@ -1,6 +1,7 @@
 .*
 *.md
 coverage
+src
 tests
 bower.json
 component.json
