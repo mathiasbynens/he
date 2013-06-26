@@ -1,6 +1,6 @@
 {
 	"name": "he",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "A robust HTML entities encoder/decoder with full Unicode support.",
 	"homepage": "http://mths.be/he",
 	"main": "he.js",
