@@ -19,6 +19,10 @@
 
 	var regexAstralSymbols = /<%= astralSymbols %>/g;
 	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbol %>/g;
+	var regexNonASCII = /[^\0-\x7F]/g;
+	var regexDecimalEscape = /&#([0-9]+);?/g;
+	var regexHexadecimalEscape = /&#[xX]([0-9a-fA-F]+);?/g;
+	var regexNamedCharacterReference = /&([0-9a-zA-Z]+;?)/g;
 	var encodeMap = <%= encodeMap %>;
 	var regexEscape = /[&<>"']/g;
 	var escapeMap = {
@@ -73,21 +77,21 @@
 				return '&#x' + codePoint.toString(16).toUpperCase() + ';';
 			})
 			// Replace other non-ASCII chars with a hexadecimal escape
-			.replace(/[^\0-\x7F]/g, function($0) {
+			.replace(regexNonASCII, function($0) {
 				return '&#x' + $0.charCodeAt(0).toString(16).toUpperCase() + ';';
 			});
 	};
 
 	var decode = function(html) {
 		return html
-			.replace(/&#([0-9]+);?/g, function($0, codePoint) {
+			.replace(regexDecimalEscape, function($0, codePoint) {
 				return codePointToSymbol(codePoint);
 			})
-			.replace(/&#[xX]([0-9a-fA-F]+);?/g, function($0, hexDigits) {
+			.replace(regexHexadecimalEscape, function($0, hexDigits) {
 				var codePoint = parseInt(hexDigits, 16);
 				return codePointToSymbol(codePoint);
 			})
-			.replace(/&([0-9a-zA-Z]+;?)/g, function($0, reference) {
+			.replace(regexNamedCharacterReference, function($0, reference) {
 				if (has(decodeMap, reference)) {
 					return decodeMap[reference];
 				} else {
