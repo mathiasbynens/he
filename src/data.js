@@ -18,8 +18,8 @@ _.forOwn(data, function(value, key) {
 	var codePoints = value.codepoints;
 	var escaped;
 	var tmp;
-	if (/;$/.test(referenceWithoutLeadingAmpersand) && (!/^[\x20-\x7E]+$/g.test(string) || /^[&<>"']+$/g.test(string))) {
-		// only if the entity has a trailing semicolon and the original string is not printable ASCII already
+	if (/;$/.test(referenceWithoutLeadingAmpersand) && (!/^[\x20-\x7E\n]+$/g.test(string) || /^[&<>"']+$/g.test(string))) {
+		// only if the entity has a trailing semicolon, and the original string is not printable ASCII already
 		escaped = stringEscape(string);
 		tmp = encodeMap[escaped];
 		if (tmp) {
