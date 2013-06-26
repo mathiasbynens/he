@@ -85,4 +85,9 @@ module.exports = function(grunt) {
 		'cover'
 	]);
 
+	grunt.registerTask('build', [
+		'curl',
+		'default'
+	]);
+
 };
