@@ -10,6 +10,7 @@ var encodeMap = {};
 var encodeMultipleSymbols = [];
 var encodeSingleCodePointsSet = regenerate();
 var decodeMap = {};
+var decodeMapWithoutSemicolons = {};
 
 _.forOwn(data, function(value, key) {
 	var referenceWithLeadingAmpersand = key;
@@ -45,7 +46,11 @@ _.forOwn(data, function(value, key) {
 			);
 		}
 	}
-	decodeMap[referenceWithoutLeadingAmpersand] = stringEscape(string);
+	if (/;$/.test(referenceWithoutLeadingAmpersand)) {
+		decodeMap[referenceWithoutLeadingAmpersand] = stringEscape(string);
+	} else {
+		decodeMapWithoutSemicolons[referenceWithoutLeadingAmpersand] = stringEscape(string);
+	}
 });
 
 encodeMultipleSymbols = _.sortBy(encodeMultipleSymbols, function(string) {
@@ -53,15 +58,32 @@ encodeMultipleSymbols = _.sortBy(encodeMultipleSymbols, function(string) {
 });
 encodeMultipleSymbols = _.uniq(encodeMultipleSymbols);
 
+var legacyReferences = _.keys(decodeMapWithoutSemicolons).sort(function(a, b) {
+	if (a.length > b.length) {
+		return -1;
+	}
+	if (a.length < b.length) {
+		return 1;
+	}
+	// a.length == b.length, so sort alphabetically
+	return a - b;
+});
+
 var postProcess = function(object) {
 	return JSON.stringify(object).replace(/\\\\/g, '\\');
 };
 
+encodeMap = postProcess(encodeMap);
+decodeMap = postProcess(decodeMap);
+decodeMapWithoutSemicolons = postProcess(decodeMapWithoutSemicolons);
+
 module.exports = {
-	'encodeMap': postProcess(encodeMap),
+	'encodeMap': encodeMap,
 	'encodeSingleSymbol': encodeSingleCodePointsSet.toString(),
 	'astralSymbols': regenerate.fromCodePointRange(0x010000, 0x10FFFF),
 	'encodeMultipleSymbols': encodeMultipleSymbols.join('|'),
-	'decodeMap': postProcess(decodeMap),
+	'decodeMap': decodeMap,
+	'decodeMapWithoutSemicolons': decodeMapWithoutSemicolons,
+	'legacyReferences': legacyReferences.join('|'),
 	'version': JSON.parse(fs.readFileSync('package.json', 'utf8')).version
 };

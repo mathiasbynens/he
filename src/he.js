@@ -21,7 +21,8 @@
 	var regexNonASCII = /[^\0-\x7F]/g;
 	var regexDecimalEscape = /&#([0-9]+);?/g;
 	var regexHexadecimalEscape = /&#[xX]([0-9a-fA-F]+);?/g;
-	var regexNamedCharacterReference = /&([0-9a-zA-Z]+;?)/g;
+	var regexNamedReference = /&([0-9a-zA-Z]+;)/g;
+	var regexLegacyReference = /&(<%= legacyReferences %>)/g;
 	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbol %>/g;
 	var encodeMap = <%= encodeMap %>;
 	var regexEscape = /[&<>"']/g;
@@ -37,6 +38,9 @@
 		'>': '&gt;'
 	};
 	var decodeMap = <%= decodeMap %>;
+	var decodeMapLegacy = <%= decodeMapWithoutSemicolons %>;
+
+	/*--------------------------------------------------------------------------*/
 
 	var stringFromCharCode = String.fromCharCode;
 
@@ -57,6 +61,8 @@
 		output += stringFromCharCode(codePoint);
 		return output;
 	};
+
+	/*--------------------------------------------------------------------------*/
 
 	var encode = function(string) {
 		return string
@@ -89,14 +95,18 @@
 				var codePoint = parseInt(hexDigits, 16);
 				return codePointToSymbol(codePoint);
 			})
-			// Decode named character references, e.g. `&copy;`
-			.replace(regexNamedCharacterReference, function($0, reference) {
+			// Decode named character references with trailing `;`, e.g. `&copy;`
+			.replace(regexNamedReference, function($0, reference) {
 				if (has(decodeMap, reference)) {
 					return decodeMap[reference];
 				} else {
 					// ambiguous ampersand; see http://mths.be/notes/ambiguous-ampersands
 					return $0;
 				}
+			})
+			// Decode named character references without trailing `;`, e.g. `&amp`
+			.replace(regexLegacyReference, function($0, reference) {
+				return decodeMapLegacy[reference]; // no need to check `has()` here
 			});
 	}
 
