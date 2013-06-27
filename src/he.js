@@ -21,7 +21,7 @@
 	var regexNonASCII = /[^\0-\x7F]/g;
 	var regexDecimalEscape = /&#([0-9]+);?/g;
 	var regexHexadecimalEscape = /&#[xX]([0-9a-fA-F]+);?/g;
-	var regexNamedReference = /&([0-9a-zA-Z]+;)/g;
+	var regexNamedReference = /&([0-9a-zA-Z]+);/g;
 	var regexLegacyReference = /&(<%= legacyReferences %>)/g;
 	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbol %>/g;
 	var encodeMap = <%= encodeMap %>;
