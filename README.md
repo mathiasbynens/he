@@ -101,7 +101,8 @@ The global default setting can be overridden by modifying the `he.encode.options
 
 ```js
 // Read the global default setting:
-he.encode.options.useNamedReferences; // `false` by default
+he.encode.options.useNamedReferences;
+// → `false` by default
 
 // Override the global default setting:
 he.encode.options.useNamedReferences = true;
@@ -148,7 +149,8 @@ The global default setting can be overridden by modifying the `he.decode.options
 
 ```js
 // Read the global default setting:
-he.decode.options.isAttributeValue; // `false` by default
+he.decode.options.isAttributeValue;
+// → `false` by default
 
 // Override the global default setting:
 he.decode.options.isAttributeValue = true;
@@ -182,6 +184,10 @@ After cloning this repository, run `npm install` to install the dependencies nee
 Once that’s done, you can run the unit tests in Node using `npm test` or `node tests/tests.js`. To run the tests in Rhino, Ringo, Narwhal, and web browsers as well, use `grunt test`.
 
 To generate [the code coverage report](http://rawgithub.com/mathiasbynens/he/master/coverage/he/he.js.html), use `grunt cover`.
+
+## Acknowledgements
+
+Thanks to [Simon Pieters](http://simon.html5.org/) (@zcorpan) for the many suggestions.
 
 ## Author
 
