@@ -39,6 +39,8 @@
 	};
 	var decodeMap = <%= decodeMap %>;
 	var decodeMapLegacy = <%= decodeMapWithoutSemicolons %>;
+	// See issue #4
+	var decodeMapNumeric = <%= decodeTable %>;
 
 	/*--------------------------------------------------------------------------*/
 
@@ -50,9 +52,18 @@
 		return hasOwnProperty.call(object, propertyName);
 	};
 
-	// Inspired by `ucs2encode` in http://mths.be/punycode
+	// Modified version of `ucs2encode`; see http://mths.be/punycode
 	var codePointToSymbol = function(codePoint) {
 		var output = '';
+		if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+			// See issue #4:
+			// “Otherwise, if the number is in the range 0xD800 to 0xDFFF […], then
+			// this is a parse error. Return a U+FFFD REPLACEMENT CHARACTER.”
+			return '\uFFFD';
+		}
+		if (has(decodeMapNumeric, codePoint)) {
+			return decodeMapNumeric[codePoint];
+		}
 		if (codePoint > 0xFFFF) {
 			codePoint -= 0x10000;
 			output += stringFromCharCode(codePoint >>> 10 & 0x3FF | 0xD800);
