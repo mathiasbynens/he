@@ -1,6 +1,6 @@
 {
 	"name": "he",
-	"version": "0.1.9",
+	"version": "0.1.10",
 	"main": "he.js",
 	"ignore": [
 		"coverage",
