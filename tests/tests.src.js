@@ -6013,6 +6013,16 @@
 			'Ambiguous ampersand'
 		);
 		equal(
+			he.decode('foo &lolwat; bar'),
+			'foo &lolwat; bar',
+			'Ambiguous ampersand'
+		);
+		equal(
+			he.decode('&notin; &noti &notin &copy123'),
+			'\u2209 \xACi \xACin \xA9123',
+			'Legacy named references (without a trailing semicolon)'
+		);
+		equal(
 			he.decode('a&#x1D306;b'),
 			'a\uD834\uDF06b',
 			'Hexadecimal escape'
@@ -6021,11 +6031,6 @@
 			he.decode('a&#119558;b&#169;c'),
 			'a\uD834\uDF06b\xA9c',
 			'Decimal escape'
-		);
-		equal(
-			he.decode('foo &lolwat; bar'),
-			'foo &lolwat; bar',
-			'Ambiguous ampersand'
 		);
 	});
 	test('encode', function() {
