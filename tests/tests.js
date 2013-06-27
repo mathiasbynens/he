@@ -8264,6 +8264,11 @@
 			'a\uD834\uDF06b\xA9c',
 			'Decimal escape'
 		);
+		equal(
+			he.decode('a&#xD834;&#xDF06;b&#55348;&#57094;c a&#x0;b&#0;c'),
+			'a\uFFFD\uFFFDb\uFFFD\uFFFDc a\uFFFDb\uFFFDc',
+			'Special numerical escapes (see issue #4)'
+		);
 	});
 	test('encode', function() {
 		// Test encoding
