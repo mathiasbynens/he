@@ -8300,6 +8300,11 @@
 			'foo&copy;bar&#x1D306;baz&#x2603;qux',
 			'Other non-ASCII symbols are represented through hexadecimal escapes'
 		);
+		equal(
+			he.encode('\'"<>&', { 'useNamedReferences': false }),
+			'&#x27;&#x22;&#x3C;&#x3E;&#x26;',
+			'Encode `escape`’s characters without using named references'
+		);
 	});
 	test('escape', function() {
 		equal(
