@@ -75,12 +75,14 @@
 
 	/*--------------------------------------------------------------------------*/
 
-	var encode = function(string) {
-		return string
+	var encode = function(string, options) {
+		if ((options || encode.options).useNamedReferences) {
 			// Apply named character references
-			.replace(regexEncode, function($0) {
+			string = string.replace(regexEncode, function($0) {
 				return '&' + encodeMap[$0] + ';'; // no need to check `has()` here
-			})
+			});
+		}
+		return string
 			// Encode astral symbols
 			.replace(regexAstralSymbols, function($0) {
 				// http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
@@ -93,6 +95,10 @@
 			.replace(regexNonASCII, function($0) {
 				return '&#x' + $0.charCodeAt(0).toString(16).toUpperCase() + ';';
 			});
+	};
+	// Expose default options (so they can be overridden globally)
+	encode.options = {
+		'useNamedReferences': false
 	};
 
 	var decode = function(html) {
