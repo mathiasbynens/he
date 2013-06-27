@@ -91,8 +91,8 @@ module.exports = function(grunt) {
 	]);
 
 	grunt.registerTask('build', [
-		'fetch-entities',
-		'fetch-table',
+		'shell:fetch-entities',
+		'shell:fetch-table',
 		'default'
 	]);
 
