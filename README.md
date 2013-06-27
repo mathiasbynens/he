@@ -71,6 +71,8 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 // → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
 ```
 
+The `options` object is optional. It recognizes the following properties:
+
 #### `useNamedReferences`
 
 The default value for the `useNamedReferences` option is `false`. This means that `encode()` will not use any named character references (e.g. `&copy;`) in the output — hexadecimal escapes (e.g. `&#xA9;`) will be used instead. Set it to `true` to enable the use of named references.
@@ -95,7 +97,7 @@ he.encode('foo © bar ≠ baz 𝌆 qux', {
 // → 'foo &copy; bar &ne; baz &#x1D306; qux'
 ```
 
-The global default setting can be overridden by modifying the `he.encode.options` object. This saves you from passing in an `options` object for every call to `encode`.
+The global default setting can be overridden by modifying the `he.encode.options` object. This saves you from passing in an `options` object for every call to `encode` if you want to use the non-default setting.
 
 ```js
 // Read the global default setting:
@@ -109,13 +111,51 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 // → 'foo &copy; bar &ne; baz &#x1D306; qux'
 ```
 
-### `he.decode(html)`
+### `he.decode(html, options)`
 
 This function takes a string of HTML and decodes any named and numerical character references in it.
 
 ```js
 he.encode('foo &copy; bar &ne; baz &#x1D306; qux');
 // → 'foo © bar ≠ baz 𝌆 qux'
+```
+
+The `options` object is optional. It recognizes the following properties:
+
+#### `isAttributeValue`
+
+The default value for the `isAttributeValue` option is `false`. This means that `decode()` will decode the string as if it were used in a text context in an HTML document. HTML has different rules for parsing character references in attribute values — set this option to `true` to treat the input string as if it were used as an attribute value.
+
+```js
+// Using the global default setting (defaults to `false`, i.e. HTML text context):
+he.decode('foo&ampbar');
+// → 'foo&bar'
+
+// Passing an `options` object to `decode`, to explicitly assume an HTML text context:
+he.encode('foo&ampbar', {
+  'isAttributeValue': false
+});
+// → 'foo&bar'
+
+// Passing an `options` object to `encode`, to explicitly assume an HTML attribute value context:
+he.encode('foo&ampbar', {
+  'isAttributeValue': true
+});
+// → 'foo&ampbar'
+```
+
+The global default setting can be overridden by modifying the `he.decode.options` object. This saves you from passing in an `options` object for every call to `decode` if you want to use the non-default setting.
+
+```js
+// Read the global default setting:
+he.decode.options.isAttributeValue; // `false` by default
+
+// Override the global default setting:
+he.decode.options.isAttributeValue = true;
+
+// Using the global default setting, which is now `true`:
+he.decode('foo&ampbar');
+// → 'foo&ampbar'
 ```
 
 ### `he.escape(text)`

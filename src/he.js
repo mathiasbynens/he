@@ -20,9 +20,9 @@
 	var regexAstralSymbols = /<%= astralSymbols %>/g;
 	var regexNonASCII = /[^\0-\x7F]/g;
 	var regexDecimalEscape = /&#([0-9]+);?/g;
-	var regexHexadecimalEscape = /&#[xX]([0-9a-fA-F]+);?/g;
+	var regexHexadecimalEscape = /&#[xX]([a-fA-F0-9]+);?/g;
 	var regexNamedReference = /&([0-9a-zA-Z]+);/g;
-	var regexLegacyReference = /&(<%= legacyReferences %>)/g;
+	var regexLegacyReference = /&(<%= legacyReferences %>)([=a-zA-Z0-9])?/g;
 	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbol %>/g;
 	var encodeMap = <%= encodeMap %>;
 	var regexEscape = /[&<>"']/g;
@@ -108,7 +108,7 @@
 		'useNamedReferences': false
 	};
 
-	var decode = function(html) {
+	var decode = function(html, options) {
 		return html
 			// Decode decimal escapes, e.g. `&#119558;`
 			.replace(regexDecimalEscape, function($0, codePoint) {
@@ -129,10 +129,19 @@
 				}
 			})
 			// Decode named character references without trailing `;`, e.g. `&amp`
-			.replace(regexLegacyReference, function($0, reference) {
-				return decodeMapLegacy[reference]; // no need to check `has()` here
+			.replace(regexLegacyReference, function($0, reference, next) {
+				if (next && (options || decode.options).isAttributeValue) {
+					return $0;
+				} else {
+					// no need to check `has()` here
+					return decodeMapLegacy[reference] + (next || '');
+				}
 			});
 	}
+	// Expose default options (so they can be overridden globally)
+	decode.options = {
+		'isAttributeValue': false
+	};
 
 	var escape = function(string) {
 		return string.replace(regexEscape, function($0) {
