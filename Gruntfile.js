@@ -86,8 +86,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('default', [
 		'template',
-		'shell:test-node',
-		'cover'
+		'shell:test-node'
 	]);
 
 	grunt.registerTask('build', [
