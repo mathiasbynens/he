@@ -68,7 +68,7 @@ This function takes a string of text and encodes any symbols that aren’t print
 
 ```js
 he.encode('foo © bar ≠ baz 𝌆 qux');
-// → 'foo &copy; bar &ne; baz &#x1D306; qux'
+// → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
 ```
 
 #### `useNamedReferences`
@@ -124,7 +124,7 @@ This function takes a string of text and escapes it for use in text contexts in 
 
 ```js
 he.escape('<img src=\'x\' onerror="prompt(1)">');
-// → '&lt;img src=&apos;x&apos; onerror=&quot;prompt(1)&quot;&gt;'
+// → '&lt;img src=&#x27;x&#x27; onerror=&quot;prompt(1)&quot;&gt;'
 ```
 
 ### `he.unescape(html)`
