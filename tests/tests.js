@@ -8304,7 +8304,7 @@
 	test('escape', function() {
 		equal(
 			he.escape('<img src=\'x\' onerror="prompt(1)"><script>alert(1)</script>'),
-			'&lt;img src=&apos;x&apos; onerror=&quot;prompt(1)&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;',
+			'&lt;img src=&#x27;x&#x27; onerror=&quot;prompt(1)&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;',
 			'XML/HTML-escape'
 		);
 		strictEqual(
