@@ -10,6 +10,12 @@ module.exports = function(grunt) {
 			'cover': {
 				'command': 'istanbul cover --report "html" --verbose --dir "coverage" "tests/tests.js"'
 			},
+			'fetch-entities': {
+				'command': 'curl http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json > data/entities.json'
+			},
+			'fetch-table': {
+				'command': 'phantomjs --load-images=no scripts/scrape-table.js'
+			},
 			'test-narwhal': {
 				'command': 'echo "Testing in Narwhal..."; export NARWHAL_OPTIMIZATION=-1; narwhal "tests/tests.js"'
 			},
@@ -38,12 +44,12 @@ module.exports = function(grunt) {
 			}
 		},
 		'curl': {
-			'tests/entities.json': 'http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json'
+			'data/entities.json': 'http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json'
 		},
 		'template': {
 			'build-he': {
 				'options': {
-					'data': require('./src/data.js')
+					'data': require('./scripts/process-data.js')
 				},
 				'files': {
 					'he.js': ['src/he.js']
@@ -52,7 +58,7 @@ module.exports = function(grunt) {
 			'build-tests': {
 				'options': {
 					'data': {
-						'testData': require('fs').readFileSync('./tests/entities.json', 'utf-8').trim()
+						'testData': require('fs').readFileSync('data/entities.json', 'utf-8').trim()
 					}
 				},
 				'files': {
@@ -64,7 +70,6 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-template');
 	grunt.loadNpmTasks('grunt-shell');
-	grunt.loadNpmTasks('grunt-curl');
 
 	grunt.registerTask('cover', 'shell:cover');
 	grunt.registerTask('ci', [
@@ -86,7 +91,8 @@ module.exports = function(grunt) {
 	]);
 
 	grunt.registerTask('build', [
-		'curl',
+		'fetch-entities',
+		'fetch-table',
 		'default'
 	]);
 
