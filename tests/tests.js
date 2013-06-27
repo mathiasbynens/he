@@ -8279,6 +8279,46 @@
 			'a\uFFFDb',
 			'Out-of-range hexadecimal escape'
 		);
+		equal(
+			he.decode('foo&ampbar'),
+			'foo&bar',
+			'Ambiguous ampersand in text context'
+		);
+		equal(
+			he.decode('foo&ampbar', {
+				'isAttributeValue': true
+			}),
+			'foo&ampbar',
+			'Attribute value context'
+		);
+		equal(
+			he.decode('foo&amp;bar', {
+				'isAttributeValue': true
+			}),
+			'foo&bar',
+			'Attribute value context'
+		);
+		equal(
+			he.decode('foo&amp;', {
+				'isAttributeValue': true
+			}),
+			'foo&',
+			'Attribute value context'
+		);
+		he.decode.options.isAttributeValue = true;
+		equal(
+			he.decode('foo&amp='),
+			'foo&amp=',
+			'Attribute value context'
+		);
+		he.decode.options.isAttributeValue = false;
+		equal(
+			he.decode('foo&amp', {
+				'isAttributeValue': true
+			}),
+			'foo&',
+			'Attribute value context'
+		);
 	});
 	test('encode', function() {
 		equal(
