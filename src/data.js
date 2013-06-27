@@ -1,3 +1,4 @@
+// Disclaimer: The code in this file is messy… But it works.
 var fs = require('fs');
 var _ = require('lodash');
 var stringEscape = require('string-escape');
@@ -47,7 +48,7 @@ _.forOwn(data, function(value, key) {
 		}
 	}
 	if (/;$/.test(referenceWithoutLeadingAmpersand)) {
-		decodeMap[referenceWithoutLeadingAmpersand] = stringEscape(string);
+		decodeMap[referenceWithoutLeadingAmpersand.replace(/;$/, '')] = stringEscape(string);
 	} else {
 		decodeMapWithoutSemicolons[referenceWithoutLeadingAmpersand] = stringEscape(string);
 	}
