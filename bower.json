@@ -1,9 +1,11 @@
 {
 	"name": "he",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"main": "he.js",
 	"ignore": [
 		"coverage",
+		"data",
+		"scripts",
 		"src",
 		"tests",
 		".*",
