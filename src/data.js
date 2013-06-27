@@ -16,6 +16,7 @@ var decodeMapWithoutSemicolons = {};
 _.forOwn(data, function(value, key) {
 	var referenceWithLeadingAmpersand = key;
 	var referenceWithoutLeadingAmpersand = referenceWithLeadingAmpersand.replace(/^&/, '');
+	var referenceOnly = referenceWithoutLeadingAmpersand.replace(/;$/, '');
 	var string = value.characters;
 	var codePoints = value.codepoints;
 	var escaped;
@@ -26,16 +27,16 @@ _.forOwn(data, function(value, key) {
 		tmp = encodeMap[escaped];
 		if (tmp) {
 			// Prefer short named character references with as few uppercase letters as possible
-			if (tmp.length > referenceWithLeadingAmpersand.length) {
-				encodeMap[escaped] = referenceWithLeadingAmpersand;
-			} else if (tmp.length == referenceWithLeadingAmpersand.length &&
-				(referenceWithLeadingAmpersand.match(/[A-Z]/g) || []).length < (tmp.match(/[A-Z]/g) || []).length) {
-				encodeMap[escaped] = referenceWithLeadingAmpersand;
+			if (tmp.length > referenceOnly.length) {
+				encodeMap[escaped] = referenceOnly;
+			} else if (tmp.length == referenceOnly.length &&
+				(referenceOnly.match(/[A-Z]/g) || []).length < (tmp.match(/[A-Z]/g) || []).length) {
+				encodeMap[escaped] = referenceOnly;
 			} else {
 				// do nothing
 			}
 		} else {
-			encodeMap[escaped] = referenceWithLeadingAmpersand;
+			encodeMap[escaped] = referenceOnly;
 		}
 		if (codePoints.length == 1) {
 			encodeSingleCodePointsSet.add(codePoints[0]);

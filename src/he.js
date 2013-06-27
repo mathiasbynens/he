@@ -68,7 +68,7 @@
 		return string
 			// Apply named character references
 			.replace(regexEncode, function($0) {
-				return encodeMap[$0]; // no need to check `has()` here
+				return '&' + encodeMap[$0] + ';'; // no need to check `has()` here
 			})
 			// Encode astral symbols
 			.replace(regexAstralSymbols, function($0) {
