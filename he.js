@@ -73,6 +73,10 @@
 		return output;
 	};
 
+	var hexEscape = function(symbol) {
+		return '&#x' + symbol.charCodeAt(0).toString(16).toUpperCase() + ';';
+	};
+
 	/*--------------------------------------------------------------------------*/
 
 	var encode = function(string, options) {
@@ -81,6 +85,10 @@
 			string = string.replace(regexEncode, function($0) {
 				return '&' + encodeMap[$0] + ';'; // no need to check `has()` here
 			});
+		} else {
+			// Encode `<>"'&` using hexadecimal escapes, now that they’re not handled
+			// using named character references
+			string = string.replace(regexEscape, hexEscape);
 		}
 		return string
 			// Encode astral symbols
@@ -92,9 +100,7 @@
 				return '&#x' + codePoint.toString(16).toUpperCase() + ';';
 			})
 			// Encode any remaining non-ASCII symbols using a hexadecimal escape
-			.replace(regexNonASCII, function($0) {
-				return '&#x' + $0.charCodeAt(0).toString(16).toUpperCase() + ';';
-			});
+			.replace(regexNonASCII, hexEscape);
 	};
 	// Expose default options (so they can be overridden globally)
 	encode.options = {
