@@ -6039,15 +6039,32 @@
 		);
 	});
 	test('encode', function() {
+		equal(
+			typeof he.encode.options,
+			'object',
+			'`he.encode.options` is exposed'
+		);
+		strictEqual(
+			he.encode.options.useNamedReferences,
+			false,
+			'`he.encode.options.useNamedReferences` is exposed and `false` by default'
+		);
 		// Test encoding
 		forEach(encodeData, function(item) {
+			he.encode.options.useNamedReferences = true;
 			equal(
 				he.encode(item.decoded),
 				item.encoded
 			);
+			he.encode.options.useNamedReferences = false;
 		});
 		equal(
 			he.encode('foo\xA9bar\uD834\uDF06baz\u2603qux'),
+			'foo&#xA9;bar&#x1D306;baz&#x2603;qux',
+			'Other non-ASCII symbols are represented through hexadecimal escapes'
+		);
+		equal(
+			he.encode('foo\xA9bar\uD834\uDF06baz\u2603qux', { 'useNamedReferences': true }),
 			'foo&copy;bar&#x1D306;baz&#x2603;qux',
 			'Other non-ASCII symbols are represented through hexadecimal escapes'
 		);

@@ -62,11 +62,49 @@ require(
 
 A string representing the semantic version number.
 
-### `he.encode(text)`
+### `he.encode(text, options)`
 
 This function takes a string of text and encodes any symbols that aren’t printable ASCII symbols and that can be replaced with named character references. For example, it would turn `©` into `&copy;`, but it wouldn’t turn `+` into `&plus;` since there is no point in doing so. Additionally, it replaces any remaining non-ASCII symbols with a hexadecimal escape sequence (e.g. `&#x1D306;`).
 
 ```js
+he.encode('foo © bar ≠ baz 𝌆 qux');
+// → 'foo &copy; bar &ne; baz &#x1D306; qux'
+```
+
+#### `useNamedReferences`
+
+The default value for the `useNamedReferences` option is `false`. This means that `encode()` will not use any named character references (e.g. `&copy;`) in the output — hexadecimal escapes (e.g. `&#xA9;`) will be used instead. Set it to `true` to enable the use of named references.
+
+**Note that if compatibility with older browsers is a concern, this option should remain disabled.**
+
+```js
+// Using the global default setting (defaults to `false`):
+he.encode('foo © bar ≠ baz 𝌆 qux');
+// → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
+
+// Passing an `options` object to `encode`, to explicitly disallow named references:
+he.encode('foo © bar ≠ baz 𝌆 qux', {
+	'useNamedReferences': false
+});
+// → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
+
+// Passing an `options` object to `encode`, to explicitly allow named references:
+he.encode('foo © bar ≠ baz 𝌆 qux', {
+	'useNamedReferences': true
+});
+// → 'foo &copy; bar &ne; baz &#x1D306; qux'
+```
+
+The global default setting can be overridden by modifying the `he.encode.options` object. This saves you from passing in an `options` object for every call to `encode`.
+
+```js
+// Read the global default setting:
+he.encode.options.useNamedReferences; // `false` by default
+
+// Override the global default setting:
+he.encode.options.useNamedReferences = true;
+
+// Using the global default setting, which is now `true`:
 he.encode('foo © bar ≠ baz 𝌆 qux');
 // → 'foo &copy; bar &ne; baz &#x1D306; qux'
 ```
