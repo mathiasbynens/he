@@ -5,7 +5,7 @@ var stringEscape = require('string-escape');
 var regenerate = require('regenerate');
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json
-var data = JSON.parse(fs.readFileSync('tests/entities.json', 'utf8'));
+var data = JSON.parse(fs.readFileSync('data/entities.json', 'utf8'));
 
 var encodeMap = {};
 var encodeMultipleSymbols = [];
@@ -86,6 +86,7 @@ module.exports = {
 	'encodeMultipleSymbols': encodeMultipleSymbols.join('|'),
 	'decodeMap': decodeMap,
 	'decodeMapWithoutSemicolons': decodeMapWithoutSemicolons,
+	'decodeTable': fs.readFileSync('data/table.js', 'utf8').replace(/\s/g, ''),
 	'legacyReferences': legacyReferences.join('|'),
 	'version': JSON.parse(fs.readFileSync('package.json', 'utf8')).version
 };
