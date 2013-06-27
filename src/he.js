@@ -55,10 +55,11 @@
 	// Modified version of `ucs2encode`; see http://mths.be/punycode
 	var codePointToSymbol = function(codePoint) {
 		var output = '';
-		if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+		if ((codePoint >= 0xD800 && codePoint <= 0xDFFF) || codePoint > 0x10FFFF) {
 			// See issue #4:
-			// “Otherwise, if the number is in the range 0xD800 to 0xDFFF […], then
-			// this is a parse error. Return a U+FFFD REPLACEMENT CHARACTER.”
+			// “Otherwise, if the number is in the range 0xD800 to 0xDFFF or is
+			// greater than 0x10FFFF, then this is a parse error. Return a U+FFFD
+			// REPLACEMENT CHARACTER.”
 			return '\uFFFD';
 		}
 		if (has(decodeMapNumeric, codePoint)) {

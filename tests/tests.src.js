@@ -6023,19 +6023,29 @@
 			'Legacy named references (without a trailing semicolon)'
 		);
 		equal(
-			he.decode('a&#x1D306;b'),
-			'a\uD834\uDF06b',
+			he.decode('a&#x1D306;b&#X0000000000001d306;c'),
+			'a\uD834\uDF06b\uD834\uDF06c',
 			'Hexadecimal escape'
 		);
 		equal(
-			he.decode('a&#119558;b&#169;c'),
-			'a\uD834\uDF06b\xA9c',
+			he.decode('a&#119558;b&#169;c&#00000000000000000169;d'),
+			'a\uD834\uDF06b\xA9c\xA9d',
 			'Decimal escape'
 		);
 		equal(
 			he.decode('a&#xD834;&#xDF06;b&#55348;&#57094;c a&#x0;b&#0;c'),
 			'a\uFFFD\uFFFDb\uFFFD\uFFFDc a\uFFFDb\uFFFDc',
 			'Special numerical escapes (see issue #4)'
+		);
+		equal(
+			he.decode('a&#x9999999999999999;b'),
+			'a\uFFFDb',
+			'Out-of-range hexadecimal escape'
+		);
+		equal(
+			he.decode('a&#x110000;b'),
+			'a\uFFFDb',
+			'Out-of-range hexadecimal escape'
 		);
 	});
 	test('encode', function() {
