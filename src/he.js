@@ -38,7 +38,7 @@
 		'>': '&gt;'
 	};
 	var decodeMap = <%= decodeMap %>;
-	var decodeMapLegacy = <%= decodeMapWithoutSemicolons %>;
+	var decodeMapLegacy = <%= decodeMapLegacy %>;
 	// See issue #4
 	var decodeMapNumeric = <%= decodeTable %>;
 
