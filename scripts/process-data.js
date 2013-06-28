@@ -1,4 +1,3 @@
-// Disclaimer: The code in this file is messy… But it works.
 var fs = require('fs');
 var _ = require('lodash');
 var stringEscape = require('string-escape');
@@ -9,9 +8,9 @@ var data = JSON.parse(fs.readFileSync('data/entities.json', 'utf8'));
 
 var encodeMap = {};
 var encodeMultipleSymbols = [];
-var encodeSingleCodePointsSet = regenerate();
+var encodeSingleCodePoints = [];
 var decodeMap = {};
-var decodeMapWithoutSemicolons = {};
+var decodeMapLegacy = {};
 
 _.forOwn(data, function(value, key) {
 	var referenceWithLeadingAmpersand = key;
@@ -19,48 +18,47 @@ _.forOwn(data, function(value, key) {
 	var referenceOnly = referenceWithoutLeadingAmpersand.replace(/;$/, '');
 	var string = value.characters;
 	var codePoints = value.codepoints;
-	var escaped;
 	var tmp;
 	if (/;$/.test(referenceWithoutLeadingAmpersand) && (!/^[\x20-\x7E\n]+$/g.test(string) || /^[&<>"']+$/g.test(string))) {
 		// only if the entity has a trailing semicolon, and the original string is not printable ASCII already
-		escaped = stringEscape(string);
-		tmp = encodeMap[escaped];
-		if (tmp) {
-			// Prefer short named character references with as few uppercase letters as possible
-			if (tmp.length > referenceOnly.length) {
-				encodeMap[escaped] = referenceOnly;
-			} else if (tmp.length == referenceOnly.length &&
-				(referenceOnly.match(/[A-Z]/g) || []).length < (tmp.match(/[A-Z]/g) || []).length) {
-				encodeMap[escaped] = referenceOnly;
-			} else {
-				// do nothing
-			}
+		tmp = encodeMap[string];
+		// Prefer short named character references with as few uppercase letters as possible
+		if ( // only add an entry if…
+			!tmp || ( // …there is no entry for this string yet, or…
+				tmp.length > referenceOnly.length || // …this reference is shorter, or…
+				(
+					// …this reference contains fewer uppercase letters
+					tmp.length == referenceOnly.length &&
+					(referenceOnly.match(/[A-Z]/g) || []).length <
+					(tmp.match(/[A-Z]/g) || []).length
+				)
+			)
+		) {
+			encodeMap[string] = referenceOnly;
 		} else {
-			encodeMap[escaped] = referenceOnly;
+			// do nothing
 		}
 		if (codePoints.length == 1) {
-			encodeSingleCodePointsSet.add(codePoints[0]);
+			encodeSingleCodePoints.push(codePoints[0]);
 		} else {
-			encodeMultipleSymbols.push(
-				stringEscape(string, {
-					'escapeEverything': true
-				})
-			);
+			encodeMultipleSymbols.push(string);
 		}
 	}
 	if (/;$/.test(referenceWithoutLeadingAmpersand)) {
-		decodeMap[referenceWithoutLeadingAmpersand.replace(/;$/, '')] = stringEscape(string);
+		decodeMap[referenceWithoutLeadingAmpersand.replace(/;$/, '')] = string;
 	} else {
-		decodeMapWithoutSemicolons[referenceWithoutLeadingAmpersand] = stringEscape(string);
+		decodeMapLegacy[referenceWithoutLeadingAmpersand] = string;
 	}
 });
 
-encodeMultipleSymbols = _.sortBy(encodeMultipleSymbols, function(string) {
-	return eval('\'' + string + '\'');
-});
-encodeMultipleSymbols = _.uniq(encodeMultipleSymbols);
+encodeMultipleSymbols = _.uniq(encodeMultipleSymbols.sort(), true);
 
-var legacyReferences = _.keys(decodeMapWithoutSemicolons).sort(function(a, b) {
+encodeSingleCodePoints = _.uniq(
+	_.sortBy(encodeSingleCodePoints, _.identity),
+	true
+);
+
+var legacyReferences = _.keys(decodeMapLegacy).sort(function(a, b) {
 	if (a.length > b.length) {
 		return -1;
 	}
@@ -71,22 +69,22 @@ var legacyReferences = _.keys(decodeMapWithoutSemicolons).sort(function(a, b) {
 	return a - b;
 });
 
-var postProcess = function(object) {
-	return JSON.stringify(object).replace(/\\\\/g, '\\');
+var writeJSON = function(fileName, object, isNumericArray) {
+	var json;
+	if (isNumericArray) {
+		json = JSON.stringify(object, null, '\t');
+	} else {
+		json = stringEscape(object, {
+			'compact': false,
+			'json': true
+		});
+	}
+	fs.writeFileSync(fileName, json + '\n');
 };
 
-encodeMap = postProcess(encodeMap);
-decodeMap = postProcess(decodeMap);
-decodeMapWithoutSemicolons = postProcess(decodeMapWithoutSemicolons);
-
-module.exports = {
-	'encodeMap': encodeMap,
-	'encodeSingleSymbol': encodeSingleCodePointsSet.toString(),
-	'astralSymbols': regenerate.fromCodePointRange(0x010000, 0x10FFFF),
-	'encodeMultipleSymbols': encodeMultipleSymbols.join('|'),
-	'decodeMap': decodeMap,
-	'decodeMapWithoutSemicolons': decodeMapWithoutSemicolons,
-	'decodeTable': fs.readFileSync('data/table.js', 'utf8').replace(/\s/g, ''),
-	'legacyReferences': legacyReferences.join('|'),
-	'version': JSON.parse(fs.readFileSync('package.json', 'utf8')).version
-};
+writeJSON('data/decode-map.json', decodeMap);
+writeJSON('data/decode-map-legacy.json', decodeMapLegacy);
+writeJSON('data/decode-legacy-named-references.json', legacyReferences);
+writeJSON('data/encode-map.json', encodeMap);
+writeJSON('data/encode-paired-symbols.json', encodeMultipleSymbols);
+writeJSON('data/encode-lone-code-points.json', encodeSingleCodePoints, true);
