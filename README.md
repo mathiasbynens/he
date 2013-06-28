@@ -169,7 +169,7 @@ he.escape('<img src=\'x\' onerror="prompt(1)">');
 // → '&lt;img src=&#x27;x&#x27; onerror=&quot;prompt(1)&quot;&gt;'
 ```
 
-### `he.unescape(html)`
+### `he.unescape(html, options)`
 
 `he.unescape` is an alias for `he.decode`. It takes a string of HTML and decodes any named and numerical character references in it.
 
