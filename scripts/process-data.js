@@ -1,7 +1,6 @@
 var fs = require('fs');
 var _ = require('lodash');
 var stringEscape = require('string-escape');
-var regenerate = require('regenerate');
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json
 var data = JSON.parse(fs.readFileSync('data/entities.json', 'utf8'));
