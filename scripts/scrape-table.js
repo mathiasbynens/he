@@ -48,7 +48,8 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 		'json': true,
 		'compact': false
 	}) + '\n';
-	fs.write('data/decode-overrides.json', json, 'w');
-	console.log('data/decode-overrides.json created successfully.');
+	var fileName = 'data/decode-map-overrides.json';
+	fs.write(fileName, json, 'w');
+	console.log(fileName + ' created successfully.');
 	phantom.exit();
 });
