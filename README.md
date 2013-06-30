@@ -86,13 +86,13 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 
 // Passing an `options` object to `encode`, to explicitly disallow named references:
 he.encode('foo © bar ≠ baz 𝌆 qux', {
-	'useNamedReferences': false
+  'useNamedReferences': false
 });
 // → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
 
 // Passing an `options` object to `encode`, to explicitly allow named references:
 he.encode('foo © bar ≠ baz 𝌆 qux', {
-	'useNamedReferences': true
+  'useNamedReferences': true
 });
 // → 'foo &copy; bar &ne; baz &#x1D306; qux'
 ```
