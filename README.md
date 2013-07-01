@@ -64,7 +64,7 @@ A string representing the semantic version number.
 
 ### `he.encode(text, options)`
 
-This function takes a string of text and encodes any symbols that aren’t printable ASCII symbols and that can be replaced with named character references. For example, it would turn `©` into `&copy;`, but it wouldn’t turn `+` into `&plus;` since there is no point in doing so. Additionally, it replaces any remaining non-ASCII symbols with a hexadecimal escape sequence (e.g. `&#x1D306;`).
+This function takes a string of text and encodes any symbols that aren’t printable ASCII symbols and that can be replaced with named character references. For example, it would turn `©` into `&copy;`, but it wouldn’t turn `+` into `&plus;` since there is no point in doing so. Additionally, it replaces any remaining non-ASCII symbols with a hexadecimal escape sequence (e.g. `&#x1D306;`). The return value of this function is always valid HTML.
 
 ```js
 he.encode('foo © bar ≠ baz 𝌆 qux');
@@ -97,6 +97,8 @@ he.encode('foo © bar ≠ baz 𝌆 qux', {
 // → 'foo &copy; bar &ne; baz &#x1D306; qux'
 ```
 
+#### Overriding default `encode` options globally
+
 The global default setting can be overridden by modifying the `he.encode.options` object. This saves you from passing in an `options` object for every call to `encode` if you want to use the non-default setting.
 
 ```js
@@ -114,7 +116,7 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 
 ### `he.decode(html, options)`
 
-This function takes a string of HTML and decodes any named and numerical character references in it.
+This function takes a string of HTML and decodes any named and numerical character references in it using [the algorithm described in section 12.2.4.69 of the HTML spec](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#tokenizing-character-references).
 
 ```js
 he.encode('foo &copy; bar &ne; baz &#x1D306; qux');
@@ -145,7 +147,31 @@ he.encode('foo&ampbar', {
 // → 'foo&ampbar'
 ```
 
-The global default setting can be overridden by modifying the `he.decode.options` object. This saves you from passing in an `options` object for every call to `decode` if you want to use the non-default setting.
+#### `strict`
+
+The default value for the `strict` option is `false`. This means that `decode()` will decode any HTML text content you feed it, even if it contains any entities that cause [parse errors](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#tokenizing-character-references). To throw an error when such invalid HTML is encountered, set the `strict` option to `true`. This option makes it possible to use _he_ as part of HTML parsers and HTML validators.
+
+```js
+// Using the global default setting (defaults to `false`, i.e. error-tolerant mode):
+he.decode('foo&ampbar');
+// → 'foo&bar'
+
+// Passing an `options` object to `decode`, to explicitly enable error-tolerant mode:
+he.decode('foo&ampbar', {
+  'strict': false
+});
+// → 'foo&bar'
+
+// Passing an `options` object to `decode`, to explicitly enable strict mode:
+he.decode('foo&ampbar', {
+  'strict': true
+});
+// → Parse error
+```
+
+#### Overriding default `decode` options globally
+
+The global default settings for the `decode` function can be overridden by modifying the `he.decode.options` object. This saves you from passing in an `options` object for every call to `decode` if you want to use a non-default setting.
 
 ```js
 // Read the global default setting:
