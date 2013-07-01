@@ -23,6 +23,7 @@
 	var regexHexadecimalEscape = /&#[xX]([a-fA-F0-9]+)(;?)/g;
 	var regexNamedReference = /&([0-9a-zA-Z]+);/g;
 	var regexLegacyReference = /&(<%= legacyReferences %>)([=a-zA-Z0-9])?/g;
+	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
 	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbols %>/g;
 	var encodeMap = <%= encodeMap %>;
 	var regexEscape = /[&<>"']/g;
@@ -147,7 +148,7 @@
 	var decode = function(html, options) {
 		options = merge(options, decode.options);
 		var strict = options.strict;
-		if (strict && /&#[xX]?[^a-fA-F0-9]/.test(html)) {
+		if (strict && regexInvalidEntity.test(html)) {
 			parseError();
 		}
 		return html
