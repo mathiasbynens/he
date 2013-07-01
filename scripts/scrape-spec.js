@@ -11,12 +11,8 @@ var open = function(url, callback) {
 	});
 };
 
-var writeJSON = function(fileName, data) {
-	var contents = stringEscape(data, {
-		'json': true,
-		'compact': false
-	}) + '\n';
-	fs.write(fileName, contents, 'w');
+var writeJSON = function(fileName, contents) {
+	fs.write(fileName, contents + '\n', 'w');
 	console.log(fileName + ' created successfully.');
 };
 
@@ -88,12 +84,21 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 
 	});
 
-	writeJSON('data/decode-map-overrides.json', result.overrides);
+	writeJSON('data/decode-map-overrides.json', stringEscape(result.overrides, {
+		'json': true,
+		'compact': false
+	}));
 
-	var codePoints = result.codePoints.split(',').sort(function(a, b) {
+	var codePoints = result.codePoints.split(',').map(function(string) {
+		return parseInt(string, 10);
+	}).sort(function(a, b) {
 		return a - b;
 	});
-	writeJSON('data/invalid-code-points.json', codePoints);
+	writeJSON('data/invalid-code-points.json', JSON.stringify(
+		codePoints,
+		null,
+		'\t'
+	));
 
 	phantom.exit();
 });
