@@ -6017,6 +6017,15 @@
 			'foo &lolwat; bar',
 			'Ambiguous ampersand'
 		);
+		raises(
+			function() {
+				he.decode('foo &lolwat; bar', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: ambiguous ampersand in strict mode'
+		);
 		equal(
 			he.decode('&notin; &noti &notin &copy123'),
 			'\u2209 \xACi \xACin \xA9123',
@@ -6037,20 +6046,84 @@
 			'a\uFFFD\uFFFDb\uFFFD\uFFFDc a\uFFFDb\uFFFDc',
 			'Special numerical escapes (see issue #4)'
 		);
+		raises(
+			function() {
+				he.decode('a&#xD834;b', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: special numerical escapes (see issue #4) in strict mode'
+		);
 		equal(
 			he.decode('a&#x9999999999999999;b'),
 			'a\uFFFDb',
-			'Out-of-range hexadecimal escape'
+			'Out-of-range hexadecimal escape in error-tolerant mode'
+		);
+		raises(
+			function() {
+				he.decode('a&#x9999999999999999;b', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: out-of-range hexadecimal escape in strict mode'
 		);
 		equal(
 			he.decode('a&#x110000;b'),
 			'a\uFFFDb',
-			'Out-of-range hexadecimal escape'
+			'Out-of-range hexadecimal escape in error-tolerant mode'
+		);
+		raises(
+			function() {
+				he.decode('a&#x110000;b', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: out-of-range hexadecimal escape in strict mode'
 		);
 		equal(
 			he.decode('foo&ampbar'),
 			'foo&bar',
 			'Ambiguous ampersand in text context'
+		);
+		raises(
+			function() {
+				he.decode('foo&ampbar', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: ambiguous ampersand in text context in strict mode'
+		);
+		equal(
+			he.decode('foo&#x1D306qux'),
+			'foo\uD834\uDF06qux',
+			'Hexadecimal escape without trailing semicolon in error-tolerant mode'
+		);
+		raises(
+			function() {
+				he.decode('foo&#x1D306qux', {
+					'strict': true
+				});
+			},
+			Error,
+			'Hexadecimal escape without trailing semicolon in strict mode'
+		);
+		equal(
+			he.decode('foo&#119558qux'),
+			'foo\uD834\uDF06qux',
+			'Decimal escape without trailing semicolon in error-tolerant mode'
+		);
+		raises(
+			function() {
+				he.decode('foo&#119558qux', {
+					'strict': true
+				});
+			},
+			Error,
+			'Decimal escape without trailing semicolon in strict mode'
 		);
 		equal(
 			he.decode('foo&ampbar', {
@@ -6087,6 +6160,129 @@
 			'foo&',
 			'Attribute value context'
 		);
+		equal(
+			he.decode('foo&amplol', {
+				'isAttributeValue': true,
+				'strict': true
+			}),
+			'foo&amplol',
+			'Attribute value context (not a parsing error!)'
+			// E.g. `&amp` is only a parse error if it gets converted to `&` or if it
+			// is followed by `=` in an attribute.
+			// http://krijnhoetmer.nl/irc-logs/whatwg/20130701#l-249
+		);
+		raises(
+			function() {
+				he.decode('foo&amplol', {
+					'isAttributeValue': false,
+					'strict': true
+				});
+			},
+			Error,
+			'Parsing error: `foo&amplol` in text context'
+		);
+		he.decode.options.strict = true;
+		raises(
+			function() {
+				he.decode('I\'m &notit; I tell you', {
+					// 'strict': true is now set globally
+					'isAttributeValue': false
+				});
+			},
+			Error,
+			'Parse error: `I\'m ¬it; I tell you`'
+		);
+		he.decode.options.strict = false;
+		raises(
+			function() {
+				he.decode('I\'m &notit; I tell you', {
+					'strict': true,
+					'isAttributeValue': true
+				});
+			},
+			Error,
+			'Parse error: `I\'m &notit; I tell you` as attribute value'
+		);
+		equal(
+			he.decode('I\'m &notit; I tell you', {
+				'strict': false,
+				'isAttributeValue': true
+			}),
+			'I\'m &notit; I tell you',
+			'No parse error: `I\'m &notit; I tell you` as attribute value in error-tolerant mode'
+		);
+		equal(
+			he.decode('I\'m &notin; I tell you', {
+				'strict': true
+			}),
+			'I\'m \u2209 I tell you',
+			'No parse error: `I\'m &notin; I tell you` as attribute value'
+		);
+		equal(
+			he.decode('&#x1;'),
+			'\x01',
+			'Decoding `&#x1;` in error-tolerant mode'
+		);
+		raises(
+			function() {
+				he.decode('&#x1;', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: decoding `&#x1;` in strict mode'
+		);
+		equal(
+			he.decode('&#x10FFFF;'),
+			'\uDBFF\uDFFF',
+			'Decoding `&#x10FFFF;` in error-tolerant mode'
+		);
+		raises(
+			function() {
+				he.decode('&#x10FFFF;', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: decoding `&#x10FFFF;` in strict mode'
+		);
+
+		// “If no characters match the range, then don't consume any characters
+		// (and unconsume the U+0023 NUMBER SIGN character and, if appropriate,
+		// the X character). This is a parse error […].”
+		equal(
+			he.decode('&#xZ', {
+				'strict': false
+			}),
+			'&#xZ',
+			'Decoding `&#xZ` in error-tolerant mode'
+		);
+		raises(
+			function() {
+				he.decode('&#xZ', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: decoding `&#xZ` in strict mode'
+		);
+		equal(
+			he.decode('&#Z', {
+				'strict': false
+			}),
+			'&#Z',
+			'Decoding `&#xZ` in error-tolerant mode'
+		);
+		raises(
+			function() {
+				he.decode('&#Z', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: decoding `&#xZ` in strict mode'
+		);
+
 	});
 	test('encode', function() {
 		equal(
