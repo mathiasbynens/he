@@ -29,5 +29,6 @@ module.exports = {
 	'decodeMapLegacy': readJSON('decode-map-legacy'),
 	'legacyReferences': readJSON('decode-legacy-named-references').join('|'),
 	'astralSymbols': regenerate.fromCodePointRange(0x010000, 0x10FFFF),
+	'invalidCodePoints': '[' + readJSON('invalid-code-points').join(',') + ']',
 	'version': JSON.parse(fs.readFileSync('package.json', 'utf-8')).version
 };

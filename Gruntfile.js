@@ -13,8 +13,8 @@ module.exports = function(grunt) {
 			'fetch-entities': {
 				'command': 'curl http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json | sed "s/  /\t/g" > data/entities.json'
 			},
-			'fetch-table': {
-				'command': 'phantomjs --load-images=no scripts/scrape-table.js'
+			'fetch-and-scrape-spec': {
+				'command': 'phantomjs --load-images=no scripts/scrape-spec.js'
 			},
 			'process-data': {
 				'command': 'node scripts/process-data.js'
@@ -104,7 +104,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('fetch', [
 		'shell:fetch-entities',
-		'shell:fetch-table',
+		'shell:fetch-and-scrape-spec',
 		'build'
 	]);
 
