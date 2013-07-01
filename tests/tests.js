@@ -8384,6 +8384,16 @@
 			'foo&amp=',
 			'Attribute value context'
 		);
+		raises(
+			function() {
+				he.decode('foo&amp=', {
+					'strict': true
+					// 'isAttributeValue': true is set globally
+				});
+			},
+			Error,
+			'Parse error: `foo&amp=` in attribute value context in strict mode'
+		);
 		he.decode.options.isAttributeValue = false;
 		equal(
 			he.decode('foo&amp', {
@@ -8477,6 +8487,22 @@
 			},
 			Error,
 			'Parse error: decoding `&#x10FFFF;` in strict mode'
+		);
+		equal(
+			he.decode('&#196605;', {
+				'strict': true
+			}),
+			'\uD87F\uDFFD',
+			'Decoding `&#196605;` (valid code point) in strict mode'
+		);
+		raises(
+			function() {
+				he.decode('&#196607;', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: decoding `&#196607;` in strict mode'
 		);
 
 		// “If no characters match the range, then don't consume any characters
