@@ -19,8 +19,8 @@
 
 	var regexAstralSymbols = /<%= astralSymbols %>/g;
 	var regexNonASCII = /[^\0-\x7F]/g;
-	var regexDecimalEscape = /&#([0-9]+);?/g;
-	var regexHexadecimalEscape = /&#[xX]([a-fA-F0-9]+);?/g;
+	var regexDecimalEscape = /&#([0-9]+)(;?)/g;
+	var regexHexadecimalEscape = /&#[xX]([a-fA-F0-9]+)(;?)/g;
 	var regexNamedReference = /&([0-9a-zA-Z]+);/g;
 	var regexLegacyReference = /&(<%= legacyReferences %>)([=a-zA-Z0-9])?/g;
 	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbol %>/g;
@@ -39,8 +39,8 @@
 	};
 	var decodeMap = <%= decodeMap %>;
 	var decodeMapLegacy = <%= decodeMapLegacy %>;
-	// See issue #4
 	var decodeMapNumeric = <%= decodeTable %>;
+	var invalidCodePoints = <%= invalidCodePoints %>;
 
 	/*--------------------------------------------------------------------------*/
 
@@ -52,15 +52,46 @@
 		return hasOwnProperty.call(object, propertyName);
 	};
 
+	var contains = function(array, value) {
+		var index = -1;
+		var length = array.length;
+		while (++index < length) {
+			if (array[index] == value) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	var merge = function(options, defaults) {
+		if (!options) {
+			return defaults;
+		}
+		var key;
+		var result = {};
+		for (key in defaults) {
+			// `hasOwnProperty` check is not needed here, since only recognized
+			// option names are used
+			result[key] = has(options, key) ? options[key] : defaults[key];
+		}
+		return result;
+	};
+
 	// Modified version of `ucs2encode`; see http://mths.be/punycode
-	var codePointToSymbol = function(codePoint) {
+	var codePointToSymbol = function(codePoint, strict) {
 		var output = '';
 		if ((codePoint >= 0xD800 && codePoint <= 0xDFFF) || codePoint > 0x10FFFF) {
 			// See issue #4:
 			// “Otherwise, if the number is in the range 0xD800 to 0xDFFF or is
 			// greater than 0x10FFFF, then this is a parse error. Return a U+FFFD
 			// REPLACEMENT CHARACTER.”
+			if (strict) {
+				parseError();
+			}
 			return '\uFFFD';
+		}
+		if (strict && contains(invalidCodePoints, codePoint)) {
+			parseError();
 		}
 		if (has(decodeMapNumeric, codePoint)) {
 			return decodeMapNumeric[codePoint];
@@ -78,10 +109,15 @@
 		return '&#x' + symbol.charCodeAt(0).toString(16).toUpperCase() + ';';
 	};
 
+	var parseError = function() {
+		throw Error('Parse error');
+	};
+
 	/*--------------------------------------------------------------------------*/
 
 	var encode = function(string, options) {
-		if ((options || encode.options).useNamedReferences) {
+		options = merge(options, encode.options);
+		if (options.useNamedReferences) {
 			// Apply named character references
 			string = string.replace(regexEncode, function($0) {
 				return '&' + encodeMap[$0] + ';'; // no need to check `has()` here
@@ -109,15 +145,26 @@
 	};
 
 	var decode = function(html, options) {
+		options = merge(options, decode.options);
+		var strict = options.strict;
+		if (strict && /&#[xX]?[^a-fA-F0-9]/.test(html)) {
+			parseError();
+		}
 		return html
 			// Decode decimal escapes, e.g. `&#119558;`
-			.replace(regexDecimalEscape, function($0, codePoint) {
-				return codePointToSymbol(codePoint);
+			.replace(regexDecimalEscape, function($0, codePoint, semicolon) {
+				if (strict && !semicolon) {
+					parseError();
+				}
+				return codePointToSymbol(codePoint, strict);
 			})
 			// Decode hexadecimal escapes, e.g. `&#x1D306;`
-			.replace(regexHexadecimalEscape, function($0, hexDigits) {
+			.replace(regexHexadecimalEscape, function($0, hexDigits, semicolon) {
+				if (strict && !semicolon) {
+					parseError();
+				}
 				var codePoint = parseInt(hexDigits, 16);
-				return codePointToSymbol(codePoint);
+				return codePointToSymbol(codePoint, strict);
 			})
 			// Decode named character references with trailing `;`, e.g. `&copy;`
 			.replace(regexNamedReference, function($0, reference) {
@@ -125,14 +172,25 @@
 					return decodeMap[reference];
 				} else {
 					// ambiguous ampersand; see http://mths.be/notes/ambiguous-ampersands
+					if (strict) {
+						parseError();
+					}
 					return $0;
 				}
 			})
 			// Decode named character references without trailing `;`, e.g. `&amp`
 			.replace(regexLegacyReference, function($0, reference, next) {
-				if (next && (options || decode.options).isAttributeValue) {
+				// This is only a parse error if it gets converted to `&`, or if it is
+				// followed by `=` in an attribute context.
+				if (next && options.isAttributeValue) {
+					if (strict && next == '=') {
+						parseError();
+					}
 					return $0;
 				} else {
+					if (strict) {
+						parseError();
+					}
 					// no need to check `has()` here
 					return decodeMapLegacy[reference] + (next || '');
 				}
@@ -140,7 +198,8 @@
 	}
 	// Expose default options (so they can be overridden globally)
 	decode.options = {
-		'isAttributeValue': false
+		'isAttributeValue': false,
+		'strict': false
 	};
 
 	var escape = function(string) {
