@@ -23,7 +23,7 @@
 	var regexHexadecimalEscape = /&#[xX]([a-fA-F0-9]+)(;?)/g;
 	var regexNamedReference = /&([0-9a-zA-Z]+);/g;
 	var regexLegacyReference = /&(<%= legacyReferences %>)([=a-zA-Z0-9])?/g;
-	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbol %>/g;
+	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbols %>/g;
 	var encodeMap = <%= encodeMap %>;
 	var regexEscape = /[&<>"']/g;
 	var escapeMap = {
@@ -39,7 +39,7 @@
 	};
 	var decodeMap = <%= decodeMap %>;
 	var decodeMapLegacy = <%= decodeMapLegacy %>;
-	var decodeMapNumeric = <%= decodeTable %>;
+	var decodeMapNumeric = <%= decodeOverrides %>;
 	var invalidCodePoints = <%= invalidCodePoints %>;
 
 	/*--------------------------------------------------------------------------*/
