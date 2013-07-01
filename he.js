@@ -110,8 +110,8 @@
 		return '&#x' + symbol.charCodeAt(0).toString(16).toUpperCase() + ';';
 	};
 
-	var parseError = function() {
-		throw Error('Parse error');
+	var parseError = function(message) {
+		throw Error('Parse error: ' + message);
 	};
 
 	/*--------------------------------------------------------------------------*/
@@ -149,20 +149,20 @@
 		options = merge(options, decode.options);
 		var strict = options.strict;
 		if (strict && regexInvalidEntity.test(html)) {
-			parseError();
+			parseError('malformed character reference');
 		}
 		return html
 			// Decode decimal escapes, e.g. `&#119558;`
 			.replace(regexDecimalEscape, function($0, codePoint, semicolon) {
 				if (strict && !semicolon) {
-					parseError();
+					parseError('character reference was not terminated by a semicolon');
 				}
 				return codePointToSymbol(codePoint, strict);
 			})
 			// Decode hexadecimal escapes, e.g. `&#x1D306;`
 			.replace(regexHexadecimalEscape, function($0, hexDigits, semicolon) {
 				if (strict && !semicolon) {
-					parseError();
+					parseError('character reference was not terminated by a semicolon');
 				}
 				var codePoint = parseInt(hexDigits, 16);
 				return codePointToSymbol(codePoint, strict);
@@ -174,7 +174,9 @@
 				} else {
 					// ambiguous ampersand; see http://mths.be/notes/ambiguous-ampersands
 					if (strict) {
-						parseError();
+						parseError(
+							'named character reference was not terminated by a semicolon'
+						);
 					}
 					return $0;
 				}
@@ -185,12 +187,14 @@
 				// followed by `=` in an attribute context.
 				if (next && options.isAttributeValue) {
 					if (strict && next == '=') {
-						parseError();
+						parseError('`&` did not start a character reference');
 					}
 					return $0;
 				} else {
 					if (strict) {
-						parseError();
+						parseError(
+							'named character reference was not terminated by a semicolon'
+						);
 					}
 					// no need to check `has()` here
 					return decodeMapLegacy[reference] + (next || '');
