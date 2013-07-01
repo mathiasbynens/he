@@ -22,9 +22,9 @@ var readJSON = function(fileName) {
 
 module.exports = {
 	'encodeMap': readJSON('encode-map'),
-	'encodeSingleSymbol': regenerate.fromCodePoints(readJSON('encode-lone-code-points')),
+	'encodeSingleSymbols': regenerate.fromCodePoints(readJSON('encode-lone-code-points')),
 	'encodeMultipleSymbols': stringEscape(readJSON('encode-paired-symbols').join('|')),
-	'decodeTable': readJSON('decode-map-overrides'),
+	'decodeOverrides': readJSON('decode-map-overrides'),
 	'decodeMap': readJSON('decode-map'),
 	'decodeMapLegacy': readJSON('decode-map-legacy'),
 	'legacyReferences': readJSON('decode-legacy-named-references').join('|'),
