@@ -119,7 +119,7 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 This function takes a string of HTML and decodes any named and numerical character references in it using [the algorithm described in section 12.2.4.69 of the HTML spec](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#tokenizing-character-references).
 
 ```js
-he.encode('foo &copy; bar &ne; baz &#x1D306; qux');
+he.decode('foo &copy; bar &ne; baz &#x1D306; qux');
 // → 'foo © bar ≠ baz 𝌆 qux'
 ```
 
