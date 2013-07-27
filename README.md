@@ -201,7 +201,7 @@ he.escape('<img src=\'x\' onerror="prompt(1)">');
 
 ### Using the `he` binary
 
-To use the `he` binary in your shell, simply install he globally using npm:
+To use the `he` binary in your shell, simply install _he_ globally using npm:
 
 ```bash
 npm install -g he
@@ -211,8 +211,12 @@ After that you will be able to encode/decode HTML entities from the command line
 
 ```bash
 $ he --encode 'föo ♥ bår 𝌆 baz'
+f&#xF6;o &#x2665; b&#xE5;r &#x1D306; baz
 
-$ he --decode 'f&#xF6;o &#x2665; b&#xE5;r &#x1D306; baz'
+$ he --encode --use-named-refs 'föo ♥ bår 𝌆 baz'
+f&ouml;o &hearts; b&aring;r &#x1D306; baz
+
+$ he --decode 'f&ouml;o &hearts; b&aring;r &#x1D306; baz'
 föo ♥ bår 𝌆 baz
 ```
 
