@@ -64,7 +64,7 @@ A string representing the semantic version number.
 
 ### `he.encode(text, options)`
 
-This function takes a string of text and encodes any symbols that aren’t printable ASCII symbols and that can be replaced with named character references. For example, it would turn `©` into `&copy;`, but it wouldn’t turn `+` into `&plus;` since there is no point in doing so. Additionally, it replaces any remaining non-ASCII symbols with a hexadecimal escape sequence (e.g. `&#x1D306;`). The return value of this function is always valid HTML.
+This function takes a string of text and encodes any symbols that aren’t printable ASCII symbols and that can be replaced with character references. For example, it would turn `©` into `&#xA9;`, but it wouldn’t turn `+` into `&#x2B;` or `&plus;` since there is no point in doing so. Additionally, it replaces any remaining non-ASCII symbols with a hexadecimal escape sequence (e.g. `&#x1D306;`). The return value of this function is always valid HTML.
 
 ```js
 he.encode('foo © bar ≠ baz 𝌆 qux');
@@ -135,13 +135,13 @@ he.decode('foo&ampbar');
 // → 'foo&bar'
 
 // Passing an `options` object to `decode`, to explicitly assume an HTML text context:
-he.encode('foo&ampbar', {
+he.decode('foo&ampbar', {
   'isAttributeValue': false
 });
 // → 'foo&bar'
 
-// Passing an `options` object to `encode`, to explicitly assume an HTML attribute value context:
-he.encode('foo&ampbar', {
+// Passing an `options` object to `decode`, to explicitly assume an HTML attribute value context:
+he.decode('foo&ampbar', {
   'isAttributeValue': true
 });
 // → 'foo&ampbar'
@@ -198,6 +198,49 @@ he.escape('<img src=\'x\' onerror="prompt(1)">');
 ### `he.unescape(html, options)`
 
 `he.unescape` is an alias for `he.decode`. It takes a string of HTML and decodes any named and numerical character references in it.
+
+### Using the `he` binary
+
+To use the `he` binary in your shell, simply install he globally using npm:
+
+```bash
+npm install -g he
+```
+
+After that you will be able to encode/decode HTML entities from the command line:
+
+```bash
+$ he --encode 'föo ♥ bår 𝌆 baz'
+
+$ he --decode 'f&#xF6;o &#x2665; b&#xE5;r &#x1D306; baz'
+föo ♥ bår 𝌆 baz
+```
+
+Read a local text file, encode it for use in an HTML text context, and save the result to a new file:
+
+```bash
+$ he --encode < foo.txt > foo-escaped.html
+```
+
+Or do the same with an online text file:
+
+```bash
+$ curl -sL "http://git.io/HnfEaw" | he --encode > escaped.html
+```
+
+Or, the opposite — read a local file containing a snippet of HTML in a text context, decode it back to plain text, and save the result to a new file:
+
+```bash
+$ he --decode < foo-escaped.html > foo.txt
+```
+
+Or do the same with an online HTML snippet:
+
+```bash
+$ curl -sL "http://git.io/HnfEaw" | he --decode > decoded.txt
+```
+
+See `he --help` for the full list of options.
 
 ## Support
 
