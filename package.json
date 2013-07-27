@@ -4,6 +4,8 @@
 	"description": "A robust HTML entities encoder/decoder with full Unicode support.",
 	"homepage": "http://mths.be/he",
 	"main": "he.js",
+	"bin": "bin/he",
+	"man": "man/he.1",
 	"keywords": [
 		"string",
 		"entities",
@@ -32,7 +34,9 @@
 	},
 	"files": [
 		"LICENSE-MIT.txt",
-		"he.js"
+		"he.js",
+		"bin/",
+		"man/"
 	],
 	"directories": {
 		"test": "tests"

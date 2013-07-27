@@ -6359,6 +6359,214 @@
 		);
 	});
 
+	// Test binary in Node only
+	var isNode = typeof process != 'undefined' && process.argv &&
+		process.argv[0] == 'node';
+
+	isNode && asyncTest('he binary', function() {
+
+		var exec = require('child_process').exec;
+
+		var shellTest = function(command, callback) {
+			exec(command, function(error, stdout, stderr) {
+				callback({
+					'stdout': stdout,
+					'stderr': stderr,
+					'exitStatus': error ? error.code : 0
+				});
+			});
+		};
+
+		var tests = [
+			{
+				'description': 'No arguments',
+				'command': './bin/he',
+				'expected': {
+					'exitStatus': 1
+				}
+			},
+			{
+				'description': '-h option',
+				'command': './bin/he -h',
+				'expected': {
+					'exitStatus': 1
+				}
+			},
+			{
+				'description': '--help option',
+				'command': './bin/he --help',
+				'expected': {
+					'exitStatus': 1
+				}
+			},
+			{
+				'description': '-v option',
+				'command': './bin/he -v',
+				'expected': {
+					'exitStatus': 1
+				}
+			},
+			{
+				'description': '--version option',
+				'command': './bin/he --version',
+				'expected': {
+					'exitStatus': 1
+				}
+			},
+			{
+				'description': 'No options',
+				'command': './bin/he "foo"',
+				'expected': {
+					'exitStatus': 1
+				}
+			},
+			{
+				'description': 'No options, piping content',
+				'command': 'echo "foo" | ./bin/he',
+				'expected': {
+					'exitStatus': 1
+				}
+			},
+			{
+				'description': '--escape option',
+				'command': './bin/he --escape \\<img\\ src\\=\\\'x\\\'\\ onerror\\=\\"prompt\\(1\\)\\"\\>',
+				'expected': {
+					'stdout': '&lt;img src=&#x27;x&#x27; onerror=&quot;prompt(1)&quot;&gt;\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--escape option, piping content',
+				'command': 'echo \\<img\\ src\\=\\\'x\\\'\\ onerror\\=\\"prompt\\(1\\)\\"\\> | ./bin/he --escape',
+				'expected': {
+					'stdout': '&lt;img src=&#x27;x&#x27; onerror=&quot;prompt(1)&quot;&gt;\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--encode option',
+				'command': './bin/he --encode \'foo \xA9 bar \u2260 baz \uD834\uDF06 qux\'',
+				'expected': {
+					'stdout': 'foo &#xA9; bar &#x2260; baz &#x1D306; qux\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--encode option, piping content',
+				'command': 'echo \'foo \xA9 bar \u2260 baz \uD834\uDF06 qux\' | ./bin/he --encode',
+				'expected': {
+					'stdout': 'foo &#xA9; bar &#x2260; baz &#x1D306; qux\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--encode --use-named-refs options',
+				'command': './bin/he --encode --use-named-refs \'foo \xA9 bar \u2260 baz \uD834\uDF06 qux\'',
+				'expected': {
+					'stdout': 'foo &copy; bar &ne; baz &#x1D306; qux\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--encode --use-named-refs options, piping content',
+				'command': 'echo \'foo \xA9 bar \u2260 baz \uD834\uDF06 qux\' | ./bin/he --encode --use-named-refs',
+				'expected': {
+					'stdout': 'foo &copy; bar &ne; baz &#x1D306; qux\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--decode option',
+				'command': './bin/he --decode \'foo &copy; bar &ne; baz &#x1D306; qux\'',
+				'expected': {
+					'stdout': 'foo \xA9 bar \u2260 baz \uD834\uDF06 qux\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--decode option, piping content',
+				'command': 'echo \'foo &copy; bar &ne; baz &#x1D306; qux foo&ampbar\' | ./bin/he --decode',
+				'expected': {
+					'stdout': 'foo \xA9 bar \u2260 baz \uD834\uDF06 qux foo&bar\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--decode --attribute options',
+				'command': './bin/he --decode --attribute \'foo&ampbar\'',
+				'expected': {
+					'stdout': 'foo&ampbar\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--decode --attribute options, piping content',
+				'command': 'echo \'foo&ampbar\' | ./bin/he --decode --attribute',
+				'expected': {
+					'stdout': 'foo&ampbar\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--decode --strict options, throwing',
+				'command': './bin/he --decode --strict \'foo&ampbar\'',
+				'expected': {
+					'exitStatus': 1
+				}
+			},
+			{
+				'description': '--decode --strict options, throwing, piping content',
+				'command': 'echo \'foo&ampbar\' | ./bin/he --decode --strict',
+				'expected': {
+					'exitStatus': 1
+				}
+			},
+			{
+				'description': '--decode --strict options, not throwing',
+				'command': './bin/he --decode --strict \'foo&amp;bar\'',
+				'expected': {
+					'stdout': 'foo&bar\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			},
+			{
+				'description': '--decode --strict options, not throwing, piping content',
+				'command': 'echo \'foo&amp;bar\' | ./bin/he --decode --strict',
+				'expected': {
+					'stdout': 'foo&bar\n',
+					'stderr': '',
+					'exitStatus': 0
+				}
+			}
+		];
+		var counter = tests.length;
+		function done() {
+			--counter || QUnit.start();
+		}
+
+		tests.forEach(function(object) {
+			shellTest(object.command, function(data) {
+				// We can’t use `deepEqual` since sometimes not all expected values are provided
+				Object.keys(object.expected).forEach(function(key) {
+					equal(data[key], object.expected[key], object.description);
+				});
+				done();
+			});
+		});
+
+	});
+
 	/*--------------------------------------------------------------------------*/
 
 	// configure QUnit and call `QUnit.start()` for
