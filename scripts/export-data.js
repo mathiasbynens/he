@@ -1,5 +1,5 @@
 var fs = require('fs');
-var stringEscape = require('string-escape');
+var stringEscape = require('jsesc');
 var regenerate = require('regenerate');
 
 var object = {};
