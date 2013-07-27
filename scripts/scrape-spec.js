@@ -1,6 +1,6 @@
 var page = require('webpage').create();
 var fs = require('fs');
-var stringEscape = require('string-escape');
+var stringEscape = require('jsesc');
 
 var open = function(url, callback) {
 	page.open(url, function(status) {
