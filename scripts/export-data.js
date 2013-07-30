@@ -27,8 +27,11 @@ module.exports = {
 	'decodeOverrides': readJSON('decode-map-overrides'),
 	'decodeMap': readJSON('decode-map'),
 	'decodeMapLegacy': readJSON('decode-map-legacy'),
-	'legacyReferences': readJSON('decode-legacy-named-references').join('|'),
 	'astralSymbols': regenerate.fromCodePointRange(0x010000, 0x10FFFF),
 	'invalidCodePoints': '[' + readJSON('invalid-code-points').join(',') + ']',
+	'regexDecimalEscapeSource': '&#([0-9]+)(;?)',
+	'regexHexadecimalEscapeSource': '&#[xX]([a-fA-F0-9]+)(;?)',
+	'regexNamedReferenceSource': '&([0-9a-zA-Z]+);',
+	'regexLegacyReferenceSource': '&(' + readJSON('decode-legacy-named-references').join('|') + ')([=a-zA-Z0-9])?',
 	'version': JSON.parse(fs.readFileSync('package.json', 'utf-8')).version
 };
