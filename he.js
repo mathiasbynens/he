@@ -161,12 +161,16 @@
 		if (strict && regexInvalidEntity.test(html)) {
 			parseError('malformed character reference');
 		}
-		// regexDecimalEscape | regexHexadecimalEscape | regexNamedReference | regexLegacyReference
 		return html.replace(regexDecode, function($0, $1, $2, $3, $4, $5, $6, $7) {
+			var codePoint;
+			var semicolon;
+			var hexDigits;
+			var reference;
+			var next;
 			if ($0.match(regexDecimalEscape)) {
 				// Decode decimal escapes, e.g. `&#119558;`
-				var codePoint = $1;
-				var semicolon = $2;
+				codePoint = $1;
+				semicolon = $2;
 				if (strict && !semicolon) {
 					parseError('character reference was not terminated by a semicolon');
 				}
@@ -174,17 +178,17 @@
 			}
 			if ($0.match(regexHexadecimalEscape)) {
 				// Decode hexadecimal escapes, e.g. `&#x1D306;`
-				var hexDigits = $3;
-				var semicolon = $4;
+				hexDigits = $3;
+				semicolon = $4;
 				if (strict && !semicolon) {
 					parseError('character reference was not terminated by a semicolon');
 				}
-				var codePoint = parseInt(hexDigits, 16);
+				codePoint = parseInt(hexDigits, 16);
 				return codePointToSymbol(codePoint, strict);
 			}
 			if ($0.match(regexNamedReference)) {
 				// Decode named character references with trailing `;`, e.g. `&copy;`
-				var reference = $5;
+				reference = $5;
 				if (has(decodeMap, reference)) {
 					return decodeMap[reference];
 				} else {
@@ -201,8 +205,8 @@
 				// Decode named character references without trailing `;`, e.g. `&amp`
 				// This is only a parse error if it gets converted to `&`, or if it is
 				// followed by `=` in an attribute context.
-				var reference = $6;
-				var next = $7;
+				reference = $6;
+				next = $7;
 				if (next && options.isAttributeValue) {
 					if (strict && next == '=') {
 						parseError('`&` did not start a character reference');
