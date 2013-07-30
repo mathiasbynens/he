@@ -8240,6 +8240,16 @@
 			);
 		});
 		equal(
+			he.decode('&amp;amp;amp;'),
+			'&amp;amp;',
+			'Only decode once'
+		);
+		equal(
+			he.decode('&#x26;amp;'),
+			'&amp;',
+			'Only decode once'
+		);
+		equal(
 			he.decode('a&foololthisdoesntexist;b'),
 			'a&foololthisdoesntexist;b',
 			'Ambiguous ampersand'
