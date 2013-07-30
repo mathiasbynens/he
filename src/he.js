@@ -37,17 +37,19 @@
 	};
 
 	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
-	var regexDecimalEscape = /&#([0-9]+)(;?)/g;
-	var regexHexadecimalEscape = /&#[xX]([a-fA-F0-9]+)(;?)/g;
-	var regexNamedReference = /&([0-9a-zA-Z]+);/g;
-	var regexLegacyReference = /&(<%= legacyReferences %>)([=a-zA-Z0-9])?/g;
-	var regexDecode = RegExp(
-		regexDecimalEscape.source + '|' +
-		regexHexadecimalEscape.source + '|' +
-		regexNamedReference.source + '|' +
-		regexLegacyReference.source,
-		'g'
-	);
+	var regexDecimalEscape = /<%= regexDecimalEscapeSource %>/;
+	var regexHexadecimalEscape = /<%= regexHexadecimalEscapeSource %>/;
+	var regexNamedReference = /<%= regexNamedReferenceSource %>/;
+	var regexLegacyReference = /<%= regexLegacyReferenceSource %>/;
+	var regexDecode = /<%=
+		regexDecimalEscapeSource
+	%>|<%=
+		regexHexadecimalEscapeSource
+	%>|<%=
+		regexNamedReferenceSource
+	%>|<%=
+		regexLegacyReferenceSource
+	%>/g;
 	var decodeMap = <%= decodeMap %>;
 	var decodeMapLegacy = <%= decodeMapLegacy %>;
 	var decodeMapNumeric = <%= decodeOverrides %>;
@@ -167,7 +169,7 @@
 			var hexDigits;
 			var reference;
 			var next;
-			if ($0.match(regexDecimalEscape)) {
+			if (regexDecimalEscape.test($0)) {
 				// Decode decimal escapes, e.g. `&#119558;`
 				codePoint = $1;
 				semicolon = $2;
@@ -176,7 +178,7 @@
 				}
 				return codePointToSymbol(codePoint, strict);
 			}
-			if ($0.match(regexHexadecimalEscape)) {
+			if (regexHexadecimalEscape.test($0)) {
 				// Decode hexadecimal escapes, e.g. `&#x1D306;`
 				hexDigits = $3;
 				semicolon = $4;
@@ -186,7 +188,7 @@
 				codePoint = parseInt(hexDigits, 16);
 				return codePointToSymbol(codePoint, strict);
 			}
-			if ($0.match(regexNamedReference)) {
+			if (regexNamedReference.test($0)) {
 				// Decode named character references with trailing `;`, e.g. `&copy;`
 				reference = $5;
 				if (has(decodeMap, reference)) {
@@ -201,29 +203,29 @@
 					return $0;
 				}
 			}
-			if ($0.match(regexLegacyReference)) {
-				// Decode named character references without trailing `;`, e.g. `&amp`
-				// This is only a parse error if it gets converted to `&`, or if it is
-				// followed by `=` in an attribute context.
-				reference = $6;
-				next = $7;
-				if (next && options.isAttributeValue) {
-					if (strict && next == '=') {
-						parseError('`&` did not start a character reference');
-					}
-					return $0;
-				} else {
-					if (strict) {
-						parseError(
-							'named character reference was not terminated by a semicolon'
-						);
-					}
-					// no need to check `has()` here
-					return decodeMapLegacy[reference] + (next || '');
+			// If we’re still here, it’s a legacy reference for sure. No need for an
+			// extra `if` check.
+			// Decode named character references without trailing `;`, e.g. `&amp`
+			// This is only a parse error if it gets converted to `&`, or if it is
+			// followed by `=` in an attribute context.
+			reference = $6;
+			next = $7;
+			if (next && options.isAttributeValue) {
+				if (strict && next == '=') {
+					parseError('`&` did not start a character reference');
 				}
+				return $0;
+			} else {
+				if (strict) {
+					parseError(
+						'named character reference was not terminated by a semicolon'
+					);
+				}
+				// no need to check `has()` here
+				return decodeMapLegacy[reference] + (next || '');
 			}
 		});
-	}
+	};
 	// Expose default options (so they can be overridden globally)
 	decode.options = {
 		'isAttributeValue': false,
