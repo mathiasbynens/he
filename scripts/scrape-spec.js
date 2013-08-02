@@ -1,6 +1,6 @@
 var page = require('webpage').create();
 var fs = require('fs');
-var stringEscape = require('jsesc');
+var jsesc = require('jsesc');
 
 var open = function(url, callback) {
 	page.open(url, function(status) {
@@ -84,7 +84,7 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 
 	});
 
-	writeJSON('data/decode-map-overrides.json', stringEscape(result.overrides, {
+	writeJSON('data/decode-map-overrides.json', jsesc(result.overrides, {
 		'json': true,
 		'compact': false
 	}));
@@ -94,11 +94,10 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 	}).sort(function(a, b) {
 		return a - b;
 	});
-	writeJSON('data/invalid-code-points.json', JSON.stringify(
-		codePoints,
-		null,
-		'\t'
-	));
+	writeJSON('data/invalid-code-points.json', jsesc(codePoints, {
+		'json': true,
+		'compact': false
+	}));
 
 	phantom.exit();
 });
