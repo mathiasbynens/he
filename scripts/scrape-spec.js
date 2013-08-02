@@ -53,6 +53,12 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 			var codePoint = parseInt(hex, 16);
 			return codePointToSymbol(codePoint);
 		});
+		
+		keys = keys.filter(function(key, index){
+			var codePoint = codePointToSymbol(key);
+			return codePoint !== values[index];
+		});
+		
 		var overrides = {};
 		keys.forEach(function(key, index) {
 			overrides[key] = values[index];
