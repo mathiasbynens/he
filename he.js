@@ -91,15 +91,18 @@
 			// greater than 0x10FFFF, then this is a parse error. Return a U+FFFD
 			// REPLACEMENT CHARACTER.”
 			if (strict) {
-				parseError();
+				parseError('character reference outside the permissible Unicode range');
 			}
 			return '\uFFFD';
 		}
-		if (strict && contains(invalidCodePoints, codePoint)) {
-			parseError();
-		}
 		if (has(decodeMapNumeric, codePoint)) {
+			if (strict) {
+				parseError('disallowed character reference');
+			}
 			return decodeMapNumeric[codePoint];
+		}
+		if (strict && contains(invalidCodePoints, codePoint)) {
+			parseError('disallowed character reference');
 		}
 		if (codePoint > 0xFFFF) {
 			codePoint -= 0x10000;

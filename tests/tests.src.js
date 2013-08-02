@@ -6238,6 +6238,24 @@
 			'I\'m \u2209 I tell you',
 			'No parse error: `I\'m &notin; I tell you` as attribute value'
 		);
+		raises(
+			function() {
+				he.decode('&#x8D;', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: `&#x8D;` in strict mode'
+		);
+		raises(
+			function() {
+				he.decode('&#xD;', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: `&#xD;` in strict mode'
+		);
 		equal(
 			he.decode('&#x1;'),
 			'\x01',
