@@ -39,25 +39,6 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 
 		var table = document.querySelector('#table-charref-overrides');
 
-		// Character reference overrides
-		var cells = table.querySelectorAll('td');
-		var keys = [].filter.call(cells, function(cell, index) {
-			return index % 3 == 0;
-		}).map(function(cell) {
-			return Number(cell.innerText.trim());
-		});
-		var values = [].filter.call(cells, function(cell, index) {
-			return index % 3 == 1;
-		}).map(function(cell) {
-			var hex = cell.innerText.trim().replace('U+', '');
-			var codePoint = parseInt(hex, 16);
-			return codePointToSymbol(codePoint);
-		});
-		var overrides = {};
-		keys.forEach(function(key, index) {
-			overrides[key] = values[index];
-		});
-
 		// Code points that cause parse errors
 		var siblings = table.parentNode.children;
 		var max = siblings.length - 1;
@@ -72,6 +53,31 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 			var codePoint = parseInt($1, 16);
 			codePoints.push(codePoint);
 			return '';
+		});
+
+		// Character reference overrides
+		var cells = table.querySelectorAll('td');
+		var keys = [].filter.call(cells, function(cell, index) {
+			return index % 3 == 0;
+		}).map(function(cell) {
+			return Number(cell.innerText.trim());
+		});
+		var values = [].filter.call(cells, function(cell, index) {
+			return index % 3 == 1;
+		}).map(function(cell) {
+			var hex = cell.innerText.trim().replace('U+', '');
+			var codePoint = parseInt(hex, 16);
+			return codePointToSymbol(codePoint);
+		});
+
+		keys = keys.filter(function(codePoint, index) {
+			var symbol = codePointToSymbol(codePoint);
+			return symbol != values[index] || codePoints.indexOf(codePoint) == -1;
+		});
+
+		var overrides = {};
+		keys.forEach(function(key, index) {
+			overrides[key] = values[index];
 		});
 
 		// Pass everything back to PhantomJS
