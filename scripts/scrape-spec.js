@@ -70,14 +70,19 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 			return codePointToSymbol(codePoint);
 		});
 
-		keys = keys.filter(function(codePoint, index) {
-			var symbol = codePointToSymbol(codePoint);
-			return symbol != values[index] || codePoints.indexOf(codePoint) == -1;
-		});
-
 		var overrides = {};
-		keys.forEach(function(key, index) {
-			overrides[key] = values[index];
+		keys = keys.forEach(function(codePoint, index) {
+			var symbol = codePointToSymbol(codePoint);
+			var correspondingValue = values[index];
+			var mapsToItself = symbol == correspondingValue;
+			var alreadyMarkedAsInvalid = codePoints.indexOf(codePoint) > -1;
+			if (mapsToItself && !alreadyMarkedAsInvalid) {
+				codePoints.push(codePoint);
+				return;
+			}
+			if (!mapsToItself || !alreadyMarkedAsInvalid) {
+				overrides[codePoint] = correspondingValue;
+			}
 		});
 
 		// Pass everything back to PhantomJS
