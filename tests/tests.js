@@ -8470,6 +8470,11 @@
 			'I\'m \u2209 I tell you',
 			'No parse error: `I\'m &notin; I tell you` as attribute value'
 		);
+		equal(
+			he.decode('&#x8D;'),
+			'\x8D',
+			'Decoding `&#x8D;` in error-tolerant mode'
+		);
 		raises(
 			function() {
 				he.decode('&#x8D;', {
@@ -8479,6 +8484,11 @@
 			Error,
 			'Parse error: `&#x8D;` in strict mode'
 		);
+		equal(
+			he.decode('&#xD;'),
+			'\x0D',
+			'Decoding `&#xD;` in error-tolerant mode'
+		);
 		raises(
 			function() {
 				he.decode('&#xD;', {
@@ -8487,6 +8497,20 @@
 			},
 			Error,
 			'Parse error: `&#xD;` in strict mode'
+		);
+		equal(
+			he.decode('&#x94;'),
+			'\u201D',
+			'Decoding `&#x94;` in error-tolerant mode'
+		);
+		raises(
+			function() {
+				he.decode('&#x94;', {
+					'strict': true
+				});
+			},
+			Error,
+			'Parse error: `&#x94;` in strict mode'
 		);
 		equal(
 			he.decode('&#x1;'),
