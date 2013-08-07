@@ -18,8 +18,8 @@ _.forOwn(data, function(value, key) {
 	var string = value.characters;
 	var codePoints = value.codepoints;
 	var tmp;
-	if (/;$/.test(referenceWithoutLeadingAmpersand) && (!/^[\x20-\x7E\n]+$/g.test(string) || /^[&<>"']+$/g.test(string))) {
-		// only if the entity has a trailing semicolon, and the original string is not printable ASCII already
+	if (/;$/.test(referenceWithoutLeadingAmpersand)) {
+		// only if the entity has a trailing semicolon
 		tmp = encodeMap[string];
 		// Prefer short named character references with as few uppercase letters as possible
 		if ( // only add an entry if…
