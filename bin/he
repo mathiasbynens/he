@@ -13,6 +13,7 @@
 
 	var main = function() {
 		var option = strings[0];
+		var count = 0;
 
 		if (/^(?:-h|--help|undefined)$/.test(option)) {
 			log(
@@ -22,7 +23,7 @@
 			log([
 				'\nUsage:\n',
 				'\the [--escape] string',
-				'\the [--encode] [--use-named-refs] string',
+				'\the [--encode] [--use-named-refs] [--everything] string',
 				'\the [--decode] [--attribute] [--strict] string',
 				'\the [-v | --version]',
 				'\the [-h | --help]',
@@ -53,6 +54,11 @@
 				options.useNamedReferences = true;
 				return;
 			}
+			if (string == '--everything') {
+				action = 'encode';
+				options.encodeEverything = true;
+				return;
+			}
 			if (string == '--decode') {
 				action = 'decode';
 				return;
@@ -77,6 +83,7 @@
 			try {
 				result = he[action](string, options);
 				log(result);
+				count++;
 			} catch(error) {
 				log(error.message + '\n');
 				log('Error: failed to %s.', action);
@@ -90,25 +97,32 @@
 				return process.exit(1);
 			}
 		});
+		if (!count) {
+			log('Error: he requires a string argument.');
+			log('Try `he --help` for more information.');
+			return process.exit(1);
+		}
 		// Return with exit status 0 outside of the `forEach` loop, in case
 		// multiple strings were passed in.
 		return process.exit(0);
-
 	};
 
 	if (stdin.isTTY) {
 		// handle shell arguments
 		main();
 	} else {
-		// Either the script is called from within a non-TTY context,
-		// or `stdin` content is being piped in.
-		if (!process.stdout.isTTY) { // called from a non-TTY context
+		// Either the script is called from within a non-TTY context, or `stdin`
+		// content is being piped in.
+		if (!process.stdout.isTTY) {
+			// The script was called from a non-TTY context. This is a rather uncommon
+			// use case we don’t actively support. However, we don’t want the script
+			// to wait forever in such cases, so…
 			timeout = setTimeout(function() {
-				// if no piped data arrived after a while, handle shell arguments
+				// …if no piped data arrived after a whole minute, handle shell
+				// arguments instead.
 				main();
-			}, 250);
+			}, 60000);
 		}
-
 		data = '';
 		stdin.on('data', function(chunk) {
 			clearTimeout(timeout);
