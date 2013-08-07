@@ -38,10 +38,6 @@
 	};
 
 	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
-	var regexDecimalEscape = /<%= regexDecimalEscapeSource %>/;
-	var regexHexadecimalEscape = /<%= regexHexadecimalEscapeSource %>/;
-	var regexNamedReference = /<%= regexNamedReferenceSource %>/;
-	var regexLegacyReference = /<%= regexLegacyReferenceSource %>/;
 	var regexDecode = /<%=
 		regexDecimalEscapeSource
 	%>|<%=
@@ -211,8 +207,7 @@
 			var hexDigits;
 			var reference;
 			var next;
-			// TODO: try to get rid of these `RegExp#test` calls, using $1…$7
-			if (regexDecimalEscape.test($0)) {
+			if ($1) {
 				// Decode decimal escapes, e.g. `&#119558;`
 				codePoint = $1;
 				semicolon = $2;
@@ -221,7 +216,7 @@
 				}
 				return codePointToSymbol(codePoint, strict);
 			}
-			if (regexHexadecimalEscape.test($0)) {
+			if ($3) {
 				// Decode hexadecimal escapes, e.g. `&#x1D306;`
 				hexDigits = $3;
 				semicolon = $4;
@@ -231,7 +226,7 @@
 				codePoint = parseInt(hexDigits, 16);
 				return codePointToSymbol(codePoint, strict);
 			}
-			if (regexNamedReference.test($0)) {
+			if ($5) {
 				// Decode named character references with trailing `;`, e.g. `&copy;`
 				reference = $5;
 				if (has(decodeMap, reference)) {
