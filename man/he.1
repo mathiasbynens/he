@@ -9,7 +9,7 @@
 .br
 .Op Fl -encode Ar string
 .br
-.Op Fl -encode Fl -use-named-refs Ar string
+.Op Fl -encode Fl -use-named-refs Fl -everything Ar string
 .br
 .Op Fl -decode Ar string
 .br
@@ -31,6 +31,8 @@ Take a string of text and escape it for use in text contexts in XML or HTML docu
 Take a string of text and encode any symbols that aren't printable ASCII symbols and that can be replaced with character references. For example, it would turn `©` into `&#xA9;`, but it wouldn't turn `+` into `&#x2B;` since there is no point in doing so. Additionally, it replaces any remaining non-ASCII symbols with a hexadecimal escape sequence (e.g. `&#x1D306;`). The return value of this function is always valid HTML.
 .It Sy "--encode --use-named-refs"
 Enable the use of named character references (like `&copy;`) in the output. If compatibility with older browsers is a concern, don't use this option.
+.It Sy "--encode --everything"
+Encode every symbol in the input string, even safe printable ASCII symbols.
 .It Sy "--decode"
 Takes a string of HTML and decode any named and numerical character references in it using the algorithm described in the HTML spec.
 .It Sy "--decode --attribute"
