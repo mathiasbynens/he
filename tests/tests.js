@@ -7289,10 +7289,6 @@
 			"encoded": "a&szlig;b"
 		},
 		{
-			"decoded": "a\tb",
-			"encoded": "a&Tab;b"
-		},
-		{
 			"decoded": "a\u2316b",
 			"encoded": "a&target;b"
 		},
@@ -8628,6 +8624,41 @@
 			he.encode('\'"<>&', { 'useNamedReferences': false }),
 			'&#x27;&#x22;&#x3C;&#x3E;&#x26;',
 			'Encode `escape`’s characters without using named references'
+		);
+		equal(
+			he.encode('a\tb', { 'encodeEverything': true }),
+			'&#x61;&#x9;&#x62;',
+			'Encode tab as `&#x9;` when `encodeEverything: true`'
+		);
+		equal(
+			he.encode('a\tb', { 'encodeEverything': true, 'useNamedReferences': true }),
+			'&#x61;&Tab;&#x62;',
+			'Encode tab as `&Tab;` when `encodeEverything: true, useNamedReferences: true`'
+		);
+		equal(
+			he.encode('a\uD834\uDF06b', { 'encodeEverything': true, 'useNamedReferences': false }),
+			'&#x61;&#x1D306;&#x62;',
+			'Encode U+1D306 as `&#x1D306;` when `encodeEverything: true, useNamedReferences: false`'
+		);
+		equal(
+			he.encode('a\uD834\uDF06b', { 'encodeEverything': true, 'useNamedReferences': true }),
+			'&#x61;&#x1D306;&#x62;',
+			'Encode U+1D306 as `&#x1D306;` when `encodeEverything: true, useNamedReferences: true`'
+		);
+		equal(
+			he.encode('a&b123;+©>\u20D2<\u20D2\nfja', { 'encodeEverything': true, 'useNamedReferences': false }),
+			'&#x61;&#x26;&#x62;&#x31;&#x32;&#x33;&#x3B;&#x2B;&#xA9;&#x3E;&#x20D2;&#x3C;&#x20D2;&#xA;&#x66;&#x6A;&#x61;',
+			'All kinds of symbols when `encodeEverything: true, useNamedReferences: false`'
+		);
+		equal(
+			he.encode('a&b123;+©>\u20D2<\u20D2\nfja', { 'encodeEverything': true, 'useNamedReferences': true }),
+			'&#x61;&amp;&#x62;&#x31;&#x32;&#x33;&semi;&plus;&copy;&nvgt;&nvlt;&NewLine;&fjlig;&#x61;',
+			'All kinds of symbols when `encodeEverything: true, useNamedReferences: true`'
+		);
+		equal(
+			he.encode('\x00\x89', { 'encodeEverything': true }),
+			'&#x0;&#x89;',
+			'Encodes disallowed code points in input `encodeEverything: true`'
 		);
 	});
 	test('escape', function() {

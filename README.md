@@ -64,7 +64,7 @@ A string representing the semantic version number.
 
 ### `he.encode(text, options)`
 
-This function takes a string of text and encodes any symbols that aren’t printable ASCII symbols and that can be replaced with character references. For example, it would turn `©` into `&#xA9;`, but it wouldn’t turn `+` into `&#x2B;` or `&plus;` since there is no point in doing so. Additionally, it replaces any remaining non-ASCII symbols with a hexadecimal escape sequence (e.g. `&#x1D306;`). The return value of this function is always valid HTML.
+This function takes a string of text and encodes (by default) any symbols that aren’t printable ASCII symbols, replacing them with character references. As long as the input string contains allowed code points only, the return value of this function is always valid HTML.
 
 ```js
 he.encode('foo © bar ≠ baz 𝌆 qux');
@@ -95,6 +95,29 @@ he.encode('foo © bar ≠ baz 𝌆 qux', {
   'useNamedReferences': true
 });
 // → 'foo &copy; bar &ne; baz &#x1D306; qux'
+```
+
+#### `encodeEverything`
+
+The default value for the `encodeEverything` option is `false`. This means that `encode()` will not use any character references for printable ASCII symbols that don’t need escaping. Set it to `true` to encode every symbol in the input string.
+
+```js
+// Using the global default setting (defaults to `false`):
+he.encode('foo © bar ≠ baz 𝌆 qux');
+// → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
+
+// Passing an `options` object to `encode`, to explicitly encode all symbols:
+he.encode('foo © bar ≠ baz 𝌆 qux', {
+  'encodeEverything': true
+});
+// → '&#x66;&#x6F;&#x6F;&#x20;&#xA9;&#x20;&#x62;&#x61;&#x72;&#x20;&#x2260;&#x20;&#x62;&#x61;&#x7A;&#x20;&#x1D306;&#x20;&#x71;&#x75;&#x78;'
+
+// This setting can be combined with the `useNamedReferences` option:
+he.encode('foo © bar ≠ baz 𝌆 qux', {
+  'encodeEverything': true,
+  'useNamedReferences': true
+});
+// → '&#x66;&#x6F;&#x6F;&#x20;&copy;&#x20;&#x62;&#x61;&#x72;&#x20;&ne;&#x20;&#x62;&#x61;&#x7A;&#x20;&#x1D306;&#x20;&#x71;&#x75;&#x78;'
 ```
 
 #### Overriding default `encode` options globally

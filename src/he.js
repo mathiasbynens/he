@@ -17,10 +17,11 @@
 
 	/*--------------------------------------------------------------------------*/
 
-	var regexAstralSymbols = /<%= astralSymbols %>/g;
+	var regexAstralSymbols = /<%= astralSymbol %>/g;
+	var regexASCII = /[\0-\x7F]/g;
 	var regexNonASCII = /[^\0-\x7F]/g;
 
-	var regexEncode = /<%= encodeMultipleSymbols %>|<%= encodeSingleSymbols %>/g;
+	var regexEncodeNonASCII = /<%= encodeNonASCII %>/g;
 	var encodeMap = <%= encodeMap %>;
 
 	var regexEscape = /[&<>"']/g;
@@ -133,10 +134,47 @@
 
 	var encode = function(string, options) {
 		options = merge(options, encode.options);
-		if (options.useNamedReferences) {
+		var encodeEverything = options.encodeEverything;
+		var useNamedReferences = options.useNamedReferences;
+		if (encodeEverything) {
+			// Encode ASCII symbols
+			string = string.replace(regexASCII, function(symbol) {
+				// Use named references if requested & possible
+				if (useNamedReferences && has(encodeMap, symbol)) {
+					return '&' + encodeMap[symbol] + ';';
+				}
+				return hexEscape(symbol);
+			});
+			// Shorten a few escapes that represent two symbols, of which at least one
+			// is within the ASCII range
+			if (useNamedReferences) {
+				string = string
+					.replace(/&gt;\u20D2/g, '&nvgt;')
+					.replace(/&lt;\u20D2/g, '&nvlt;')
+					.replace(/&#x66;&#x6A;/g, '&fjlig;');
+			}
+			// Encode non-ASCII symbols
+			if (useNamedReferences) {
+				// Encode non-ASCII symbols that can be replaced with a named reference
+				string = string.replace(regexEncodeNonASCII, function(string) {
+					return '&' + encodeMap[string] + ';'; // no need to check `has()` here
+				});
+			}
+			// Note: any remaining non-ASCII symbols are handled outside of the `if`
+		} else if (useNamedReferences) {
 			// Apply named character references
-			string = string.replace(regexEncode, function($0) {
-				return '&' + encodeMap[$0] + ';'; // no need to check `has()` here
+			// Encode `<>"'&` using named character references
+			string = string.replace(regexEscape, function(string) {
+				return '&' + encodeMap[string] + ';'; // no need to check `has()` here
+			});
+			// Shorten escapes that represent two symbols, of which at least one is
+			// `<>"'&`
+			string = string
+				.replace(/&gt;\u20D2/g, '&nvgt;')
+				.replace(/&lt;\u20D2/g, '&nvlt;');
+			// Encode non-ASCII symbols that can be replaced with a named reference
+			string = string.replace(regexEncodeNonASCII, function(string) {
+				return '&' + encodeMap[string] + ';'; // no need to check `has()` here
 			});
 		} else {
 			// Encode `<>"'&` using hexadecimal escapes, now that they’re not handled
@@ -157,7 +195,8 @@
 	};
 	// Expose default options (so they can be overridden globally)
 	encode.options = {
-		'useNamedReferences': false
+		'useNamedReferences': false,
+		'encodeEverything': false
 	};
 
 	var decode = function(html, options) {
@@ -172,6 +211,7 @@
 			var hexDigits;
 			var reference;
 			var next;
+			// TODO: try to get rid of these `RegExp#test` calls, using $1…$7
 			if (regexDecimalEscape.test($0)) {
 				// Decode decimal escapes, e.g. `&#119558;`
 				codePoint = $1;
