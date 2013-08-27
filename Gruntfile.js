@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 				'command': 'istanbul cover --report "html" --verbose --dir "coverage" "tests/tests.js"'
 			},
 			'fetch-entities': {
-				'command': 'curl http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json | sed "s/  /\t/g" > data/entities.json'
+				'command': 'curl http://www.whatwg.org/specs/web-apps/current-work/entities.json | sed "s/  /\t/g" > data/entities.json'
 			},
 			'fetch-and-scrape-spec': {
 				'command': 'phantomjs --load-images=no scripts/scrape-spec.js'
@@ -45,9 +45,6 @@ module.exports = function(grunt) {
 			'test-browser': {
 				'command': 'echo "Testing in a browser..."; open "tests/index.html"'
 			}
-		},
-		'curl': {
-			'data/entities.json': 'http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json'
 		},
 		'template': {
 			'build-he': {
