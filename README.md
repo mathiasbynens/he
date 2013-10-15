@@ -283,7 +283,7 @@ To generate [the code coverage report](http://rawgithub.com/mathiasbynens/he/mas
 
 ## Acknowledgements
 
-Thanks to [Simon Pieters](http://simon.html5.org/) (@zcorpan) for the many suggestions.
+Thanks to [Simon Pieters](http://simon.html5.org/) ([@zcorpan](https://twitter.com/zcorpan)) for the many suggestions.
 
 ## Author
 
