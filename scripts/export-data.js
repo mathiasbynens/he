@@ -2,16 +2,10 @@ var fs = require('fs');
 var jsesc = require('jsesc');
 var regenerate = require('regenerate');
 
-var object = {};
-var toString = object.toString;
-var isArray = function(value) {
-	return toString.call(value) == '[object Array]';
-};
-
 var readJSON = function(fileName) {
 	var contents = fs.readFileSync('data/' + fileName + '.json', 'utf-8');
 	var object = JSON.parse(contents);
-	if (isArray(object)) {
+	if (Array.isArray(object)) {
 		return object;
 	}
 	return jsesc(object, {
