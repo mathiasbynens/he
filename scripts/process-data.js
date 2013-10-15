@@ -1,6 +1,6 @@
 var fs = require('fs');
+var jsesc = require('jsesc');
 var _ = require('lodash');
-var stringEscape = require('jsesc');
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json
 var data = JSON.parse(fs.readFileSync('data/entities.json', 'utf8'));
@@ -50,10 +50,13 @@ _.forOwn(data, function(value, key) {
 	}
 });
 
-encodeMultipleSymbols = _.uniq(encodeMultipleSymbols.sort(), true);
+encodeMultipleSymbols = _.uniq(
+	encodeMultipleSymbols.sort(), // sort strings by code point value
+	true
+);
 
 encodeSingleCodePoints = _.uniq(
-	_.sortBy(encodeSingleCodePoints, _.identity),
+	_.sortBy(encodeSingleCodePoints), // numeric sort
 	true
 );
 
@@ -68,16 +71,11 @@ var legacyReferences = _.keys(decodeMapLegacy).sort(function(a, b) {
 	return a - b;
 });
 
-var writeJSON = function(fileName, object, isNumericArray) {
-	var json;
-	if (isNumericArray) {
-		json = JSON.stringify(object, null, '\t');
-	} else {
-		json = stringEscape(object, {
-			'compact': false,
-			'json': true
-		});
-	}
+var writeJSON = function(fileName, object) {
+	var json = jsesc(object, {
+		'compact': false,
+		'json': true
+	});
 	fs.writeFileSync(fileName, json + '\n');
 };
 
@@ -86,4 +84,4 @@ writeJSON('data/decode-map-legacy.json', decodeMapLegacy);
 writeJSON('data/decode-legacy-named-references.json', legacyReferences);
 writeJSON('data/encode-map.json', encodeMap);
 writeJSON('data/encode-paired-symbols.json', encodeMultipleSymbols);
-writeJSON('data/encode-lone-code-points.json', encodeSingleCodePoints, true);
+writeJSON('data/encode-lone-code-points.json', encodeSingleCodePoints);
