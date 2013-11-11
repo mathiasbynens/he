@@ -7,6 +7,7 @@
 	"scripts": [
 		"he.js"
 	],
+	"main": "he.js",
 	"keywords": [
 		"string",
 		"entities",
