@@ -1,6 +1,7 @@
 var fs = require('fs');
 var jsesc = require('jsesc');
 var regenerate = require('regenerate');
+var difference = require('lodash.difference');
 
 var readJSON = function(fileName) {
 	var contents = fs.readFileSync('data/' + fileName + '.json', 'utf-8');
@@ -36,7 +37,7 @@ var encodeMultipleSymbolsASCII = jsesc(
 	arrayEncodeMultipleSymbolsASCII.join('|')
 );
 var encodeMultipleSymbolsNonASCII = jsesc(
-	regenerate.difference(
+	difference(
 		arrayEncodeMultipleSymbols,
 		arrayEncodeMultipleSymbolsASCII
 	).join('|')
@@ -57,7 +58,7 @@ module.exports = {
 	'decodeOverrides': readJSON('decode-map-overrides'),
 	'decodeMap': readJSON('decode-map'),
 	'decodeMapLegacy': readJSON('decode-map-legacy'),
-	'astralSymbol': regenerate.fromCodePointRange(0x010000, 0x10FFFF),
+	'astralSymbol': regenerate().addRange(0x010000, 0x10FFFF).toString(),
 	'invalidCodePoints': jsesc(readJSON('invalid-code-points')),
 	'regexDecimalEscapeSource': '&#([0-9]+)(;?)',
 	'regexHexadecimalEscapeSource': '&#[xX]([a-fA-F0-9]+)(;?)',
