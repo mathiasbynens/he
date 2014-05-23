@@ -211,7 +211,7 @@ he.decode('foo&ampbar');
 
 ### `he.escape(text)`
 
-This function takes a string of text and escapes it for use in text contexts in XML or HTML documents. Only the following characters are escaped: `&`, `<`, `>`, `"`, and `'`.
+This function takes a string of text and escapes it for use in text contexts in XML or HTML documents. Only the following characters are escaped: `&`, `<`, `>`, `"`, `'`, and `` ` ``.
 
 ```js
 he.escape('<img src=\'x\' onerror="prompt(1)">');
