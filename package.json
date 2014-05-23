@@ -1,11 +1,10 @@
 {
 	"name": "he",
-	"version": "0.3.6",
+	"version": "0.4.0",
 	"description": "A robust HTML entities encoder/decoder with full Unicode support.",
 	"homepage": "http://mths.be/he",
 	"main": "he.js",
 	"bin": "bin/he",
-	"man": "man/he.1",
 	"keywords": [
 		"string",
 		"entities",
@@ -47,16 +46,16 @@
 		"test": "node tests/tests.js"
 	},
 	"devDependencies": {
-		"grunt": "~0.4.4",
-		"grunt-shell": "~0.6.4",
+		"grunt": "~0.4.5",
+		"grunt-shell": "~0.7.0",
 		"grunt-template": "~0.2.3",
-		"istanbul": "~0.2.7",
+		"istanbul": "~0.2.10",
 		"jsesc": "~0.4.3",
 		"lodash": "~2.4.1",
 		"lodash.difference": "~2.4.1",
 		"qunit-extras": "~1.1.0",
 		"qunitjs": "~1.11.0",
-		"regenerate": "~0.6.0",
+		"regenerate": "~0.6.1",
 		"requirejs": "~2.1.11"
 	}
 }

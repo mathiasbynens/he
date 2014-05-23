@@ -1,4 +1,4 @@
-/*! http://mths.be/he v0.3.6 by @mathias | MIT license */
+/*! http://mths.be/he v0.4.0 by @mathias | MIT license */
 ;(function(root) {
 
 	// Detect free variables `exports`
@@ -276,7 +276,7 @@
 	/*--------------------------------------------------------------------------*/
 
 	var he = {
-		'version': '0.3.6',
+		'version': '0.4.0',
 		'encode': encode,
 		'decode': decode,
 		'escape': escape,
