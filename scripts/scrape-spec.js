@@ -11,13 +11,17 @@ var open = function(url, callback) {
 	});
 };
 
-var writeJSON = function(fileName, contents) {
+var writeJSON = function(fileName, data) {
+	var contents = jsesc(data, {
+		'json': true,
+		'compact': false
+	});
 	fs.write(fileName, contents + '\n', 'w');
 	console.log(fileName + ' created successfully.');
 };
 
-open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#table-charref-overrides', function() {
-	var result = page.evaluate(function() {
+open('http://www.whatwg.org/specs/web-apps/current-work/', function() {
+	var result = JSON.parse(page.evaluate(function() {
 
 		// Modified version of `ucs2encode`; see http://mths.be/punycode
 		var stringFromCharCode = String.fromCharCode;
@@ -37,47 +41,50 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 			return result;
 		};
 
+		// Code points that cause parse errors when used in character references
+		// http://whatwg.org/html/tokenization.html#table-charref-overrides
 		var table = document.querySelector('#table-charref-overrides');
-
-		// Code points that cause parse errors
 		var siblings = table.parentNode.children;
 		var max = siblings.length - 1;
-		var text = siblings[max].innerText;
-		var codePoints = [];
+		var text = siblings[max].textContent;
+		var charRefCodePoints = [];
 		text.replace(/0x([a-fA-F0-9]+)\s+to\s+0x([a-fA-F0-9]+)/g, function($0, $1, $2) {
 			var start = parseInt($1, 16);
 			var end = parseInt($2, 16);
-			codePoints = codePoints.concat(range(start, end));
+			charRefCodePoints = charRefCodePoints.concat(range(start, end));
 			return '';
 		}).replace(/0x([a-fA-F0-9]+)/g, function($0, $1) {
 			var codePoint = parseInt($1, 16);
-			codePoints.push(codePoint);
+			charRefCodePoints.push(codePoint);
 			return '';
+		});
+		charRefCodePoints = charRefCodePoints.sort(function(a, b) {
+			return a - b;
 		});
 
 		// Character reference overrides
+		// http://whatwg.org/html/tokenization.html#table-charref-overrides
 		var cells = table.querySelectorAll('td');
 		var keys = [].filter.call(cells, function(cell, index) {
 			return index % 3 == 0;
 		}).map(function(cell) {
-			return Number(cell.innerText.trim());
+			return Number(cell.textContent.trim());
 		});
 		var values = [].filter.call(cells, function(cell, index) {
 			return index % 3 == 1;
 		}).map(function(cell) {
-			var hex = cell.innerText.trim().replace('U+', '');
+			var hex = cell.textContent.trim().replace('U+', '');
 			var codePoint = parseInt(hex, 16);
 			return codePointToSymbol(codePoint);
 		});
-
 		var overrides = {};
 		keys = keys.forEach(function(codePoint, index) {
 			var symbol = codePointToSymbol(codePoint);
 			var correspondingValue = values[index];
 			var mapsToItself = symbol == correspondingValue;
-			var alreadyMarkedAsInvalid = codePoints.indexOf(codePoint) > -1;
+			var alreadyMarkedAsInvalid = charRefCodePoints.indexOf(codePoint) > -1;
 			if (mapsToItself && !alreadyMarkedAsInvalid) {
-				codePoints.push(codePoint);
+				charRefCodePoints.push(codePoint);
 				return;
 			}
 			if (!mapsToItself || !alreadyMarkedAsInvalid) {
@@ -85,30 +92,48 @@ open('http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.h
 			}
 		});
 
-		// Pass everything back to PhantomJS
-		return {
+		// Code points for symbols that cause parse errors when in the HTML source
+		// http://whatwg.org/html/parsing.html#preprocessing-the-input-stream
+		var header = document.querySelector('#preprocessing-the-input-stream');
+		var element = header;
+		var text;
+		while (element = element.nextSibling) {
+			text = element.textContent.trim();
+			if (/Any occurrences of any characters in the ranges/.test(text)) {
+				break;
+			}
+		}
+		var rawCodePoints = [];
+		text.replace(/U\+([a-fA-F0-9]+)\s+to\s+U\+([a-fA-F0-9]+)/g, function($0, $1, $2) {
+			var start = parseInt($1, 16);
+			var end = parseInt($2, 16);
+			rawCodePoints = rawCodePoints.concat(range(start, end));
+			return '';
+		}).replace(/U\+([a-fA-F0-9]+)/g, function($0, $1) {
+			var codePoint = parseInt($1, 16);
+			rawCodePoints.push(codePoint);
+			return '';
+		});
+		rawCodePoints = rawCodePoints.sort(function(a, b) {
+			return a - b;
+		});
+
+		// Pass everything back to PhantomJS.
+		return JSON.stringify({
 			'overrides': overrides,
-			// When passed as an array, it comes out as an object, so pass it as a
-			// comma-separated string instead
-			'codePoints': codePoints.join(',')
-		};
+			'charRefCodePoints': charRefCodePoints,
+			'rawCodePoints': rawCodePoints
+		});
 
-	});
-
-	writeJSON('data/decode-map-overrides.json', jsesc(result.overrides, {
-		'json': true,
-		'compact': false
 	}));
 
-	var codePoints = result.codePoints.split(',').map(function(string) {
-		return parseInt(string, 10);
-	}).sort(function(a, b) {
-		return a - b;
-	});
-	writeJSON('data/invalid-code-points.json', jsesc(codePoints, {
-		'json': true,
-		'compact': false
-	}));
+	writeJSON('data/decode-map-overrides.json', result.overrides);
+	writeJSON('data/invalid-character-reference-code-points.json', result.charRefCodePoints);
+	writeJSON('data/invalid-raw-code-points.json', result.rawCodePoints);
+	// Note: `invalid-character-reference-code-points.json` is identical to
+	// `invalid-raw-code-points.json` except U+000D (CR) is not included in
+	// the latter, because lone CR are converted to LF before tokenization.
+	// http://whatwg.org/html/parsing.html#preprocessing-the-input-stream
 
 	phantom.exit();
 });
