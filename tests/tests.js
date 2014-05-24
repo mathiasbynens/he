@@ -6428,76 +6428,145 @@
 			'All kinds of symbols when `encodeEverything: true, useNamedReferences: true`'
 		);
 		equal(
-			he.encode('foo\uDC00bar'),
-			'foo&#xDC00;bar',
-			'Lone high surrogate'
-		);
-		raises(
-			function() {
-				he.encode('foo\uDC00bar', { 'strict': true });
-			},
-			Error,
-			'Lone high surrogate triggers parse error when `strict: true`'
-		);
-		equal(
-			he.encode('\uDC00bar'),
-			'&#xDC00;bar',
-			'Lone high surrogate at the start of a string'
-		);
-		raises(
-			function() {
-				he.encode('\uDC00bar', { 'strict': true });
-			},
-			Error,
-			'Lone high surrogate at the start of a string triggers parse error when `strict: true`'
-		);
-		equal(
-			he.encode('foo\uDC00'),
-			'foo&#xDC00;',
-			'Lone high surrogate at the end of a string'
-		);
-		raises(
-			function() {
-				he.encode('foo\uDC00', { 'strict': true });
-			},
-			Error,
-			'Lone high surrogate at the end of a string triggers parse error when `strict: true`'
-		);
-		equal(
 			he.encode('foo\uD800bar'),
 			'foo&#xD800;bar',
-			'Lone low surrogate'
+			'Lone high surrogate'
 		);
 		raises(
 			function() {
 				he.encode('foo\uD800bar', { 'strict': true });
 			},
 			Error,
-			'Lone low surrogate triggers parse error when `strict: true`'
+			'Lone high surrogate triggers parse error when `strict: true`'
 		);
-
-
-
 		equal(
 			he.encode('\uD800bar'),
 			'&#xD800;bar',
-			'Lone low surrogate at the start of a string'
+			'Lone high surrogate at the start of a string'
 		);
 		raises(
 			function() {
 				he.encode('\uD800bar', { 'strict': true });
 			},
 			Error,
-			'Lone low surrogate at the start of a string triggers parse error when `strict: true`'
+			'Lone high surrogate at the start of a string triggers parse error when `strict: true`'
 		);
 		equal(
 			he.encode('foo\uD800'),
 			'foo&#xD800;',
-			'Lone low surrogate at the end of a string'
+			'Lone high surrogate at the end of a string'
 		);
 		raises(
 			function() {
 				he.encode('foo\uD800', { 'strict': true });
+			},
+			Error,
+			'Lone high surrogate at the end of a string triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('foo\uDBFFbar'),
+			'foo&#xDBFF;bar',
+			'Lone high surrogate'
+		);
+		raises(
+			function() {
+				he.encode('foo\uDBFFbar', { 'strict': true });
+			},
+			Error,
+			'Lone high surrogate triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('\uDBFFbar'),
+			'&#xDBFF;bar',
+			'Lone high surrogate at the start of a string'
+		);
+		raises(
+			function() {
+				he.encode('\uDBFFbar', { 'strict': true });
+			},
+			Error,
+			'Lone high surrogate at the start of a string triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('foo\uDBFF'),
+			'foo&#xDBFF;',
+			'Lone high surrogate at the end of a string'
+		);
+		raises(
+			function() {
+				he.encode('foo\uDBFF', { 'strict': true });
+			},
+			Error,
+			'Lone high surrogate at the end of a string triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('foo\uDC00bar'),
+			'foo&#xDC00;bar',
+			'Lone low surrogate'
+		);
+		raises(
+			function() {
+				he.encode('foo\uDC00bar', { 'strict': true });
+			},
+			Error,
+			'Lone low surrogate triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('\uDC00bar'),
+			'&#xDC00;bar',
+			'Lone low surrogate at the start of a string'
+		);
+		raises(
+			function() {
+				he.encode('\uDC00bar', { 'strict': true });
+			},
+			Error,
+			'Lone low surrogate at the start of a string triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('foo\uDC00'),
+			'foo&#xDC00;',
+			'Lone low surrogate at the end of a string'
+		);
+		raises(
+			function() {
+				he.encode('foo\uDC00', { 'strict': true });
+			},
+			Error,
+			'Lone low surrogate at the end of a string triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('foo\uDFFFbar'),
+			'foo&#xDFFF;bar',
+			'Lone low surrogate'
+		);
+		raises(
+			function() {
+				he.encode('foo\uDFFFbar', { 'strict': true });
+			},
+			Error,
+			'Lone low surrogate triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('\uDFFFbar'),
+			'&#xDFFF;bar',
+			'Lone low surrogate at the start of a string'
+		);
+		raises(
+			function() {
+				he.encode('\uDFFFbar', { 'strict': true });
+			},
+			Error,
+			'Lone low surrogate at the start of a string triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('foo\uDFFF'),
+			'foo&#xDFFF;',
+			'Lone low surrogate at the end of a string'
+		);
+		raises(
+			function() {
+				he.encode('foo\uDFFF', { 'strict': true });
 			},
 			Error,
 			'Lone low surrogate at the end of a string triggers parse error when `strict: true`'
