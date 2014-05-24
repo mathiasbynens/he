@@ -19,10 +19,17 @@
 
 	// All astral symbols.
 	var regexAstralSymbols = /<%= astralSymbol %>/g;
-	// All ASCII symbols (not just printable ASCII).
-	var regexASCII = /[\0-\x7F]/g;
-	// BMP symbols that are not newlines or printable ASCII symbols.
-	var regexNonASCII = /[^\n\r\x20-\x7F]/g;
+	// All ASCII symbols (not just printable ASCII) except those listed in the
+	// first column of the overrides table.
+	// http://whatwg.org/html/tokenization.html#table-charref-overrides
+	var regexASCII = /<%= ascii %>/g;
+	// BMP symbols that are not one of the following:
+	// * newlines
+	// * printable ASCII symbols
+	// * code points listed in the first column of the overrides table
+	//   http://whatwg.org/html/tokenization.html#table-charref-overrides
+	//var regexNonASCII = /[^\n\r\x20-\x7F]/g;
+	var regexNonASCII = /<%= otherBMP %>/g;
 
 	var regexEncodeNonASCII = /<%= encodeNonASCII %>/g;
 	var encodeMap = <%= encodeMap %>;

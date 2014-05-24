@@ -58,6 +58,12 @@ var invalidRawCodePoints = readJSON('invalid-raw-code-points');
 // raw code points. http://whatwg.org/html/tokenization.html#data-state
 invalidRawCodePoints.unshift(0x0000);
 
+var overrides = Object.keys(
+	JSON.parse(fs.readFileSync('data/decode-map-overrides.json', 'utf-8'))
+).map(function(codePoint) {
+	return Number(codePoint);
+});
+
 module.exports = {
 	'encodeMap': readJSON('encode-map'),
 	'encodeASCII': encodeASCII, // not used
@@ -82,6 +88,28 @@ module.exports = {
 			')([=a-zA-Z0-9])?';
 	}()),
 	'regexLoneSurrogate': '[\\uD800-\\uDBFF](?:[^\\uDC00-\\uDFFF]|$)|(?:[^\\uD800-\uDBFF]|^)[\\uDC00-\\uDFFF]',
+	'ascii': (function() {
+		return regenerate()
+			// Add all ASCII symbols (not just printable ASCII).
+			.addRange(0x0, 0x7F)
+ 			// Remove code points listed in the first column of the overrides table.
+			// http://whatwg.org/html/tokenization.html#table-charref-overrides
+			.remove(overrides)
+			.toString();
+	}()),
+	'otherBMP': (function() {
+		return regenerate()
+			// Add all BMP symbols.
+			.addRange(0x0, 0xFFFF)
+			// Remove ASCII newlines.
+			.remove('\r', '\n')
+			// Remove printable ASCII symbols.
+			.removeRange(0x20, 0x7F)
+			// Remove code points listed in the first column of the overrides table.
+			// http://whatwg.org/html/tokenization.html#table-charref-overrides
+			.remove(overrides)
+			.toString();
+	}()),
 	'testData': fs.readFileSync('data/entities.json', 'utf-8').trim(),
 	'version': JSON.parse(fs.readFileSync('package.json', 'utf-8')).version
 };
