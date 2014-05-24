@@ -69,7 +69,7 @@
 	%>/g;
 	var decodeMap = <%= decodeMap %>;
 	var decodeMapLegacy = <%= decodeMapLegacy %>;
-	var decodeMapNumeric = <%= decodeOverrides %>;
+	var decodeMapNumeric = <%= decodeMapOverrides %>;
 	var invalidReferenceCodePoints = <%= invalidReferenceCodePoints %>;
 
 	/*--------------------------------------------------------------------------*/

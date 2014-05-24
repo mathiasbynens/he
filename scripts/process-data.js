@@ -1,14 +1,9 @@
 var fs = require('fs');
 var jsesc = require('jsesc');
 var _ = require('lodash');
-require('string.fromcodepoint');
 
-var readJSON = function(file) {
-	return JSON.parse(fs.readFileSync(file, 'utf8'));
-};
-
-// http://www.whatwg.org/specs/web-apps/current-work/multipage/entities.json
-var data = readJSON('data/entities.json');
+// http://www.whatwg.org/specs/web-apps/current-work/entities.json
+var data = require('../data/entities.json');
 
 var encodeMap = {};
 var encodeMultipleSymbols = [];
