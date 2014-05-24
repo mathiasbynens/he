@@ -46,7 +46,14 @@
 	};
 
 	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
-	var regexInvalidRawCodePoint = /<%= invalidRawCodePoints %>/;
+	var regexInvalidRawCodePoint = /<%=
+		invalidRawCodePoints
+	%>|<%=
+		// http://whatwg.org/html/parsing.html#preprocessing-the-input-stream
+		// “Any character that is a not a Unicode character, i.e. any isolated
+		// surrogate, is a parse error.”
+		regexLoneSurrogate
+	%>/;
 	var regexDecode = /<%=
 		regexDecimalEscapeSource
 	%>|<%=

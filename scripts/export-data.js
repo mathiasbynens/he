@@ -81,6 +81,7 @@ module.exports = {
 		return '&(' + readJSON('decode-legacy-named-references').join('|') +
 			')([=a-zA-Z0-9])?';
 	}()),
+	'regexLoneSurrogate': '[\\uD800-\\uDBFF](?:[^\\uDC00-\\uDFFF]|$)|(?:[^\\uD800-\uDBFF]|^)[\\uDC00-\\uDFFF]',
 	'testData': fs.readFileSync('data/entities.json', 'utf-8').trim(),
 	'version': JSON.parse(fs.readFileSync('package.json', 'utf-8')).version
 };
