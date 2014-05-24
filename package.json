@@ -55,7 +55,7 @@
 		"lodash.difference": "~2.4.1",
 		"qunit-extras": "~1.1.0",
 		"qunitjs": "~1.11.0",
-		"regenerate": "~0.6.1",
+		"regenerate": "~0.6.2",
 		"requirejs": "~2.1.11",
 		"string.fromcodepoint": "~0.2.0"
 	}

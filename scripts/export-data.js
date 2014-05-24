@@ -67,19 +67,19 @@ var overrides = Object.keys(
 module.exports = {
 	'encodeMap': readJSON('encode-map'),
 	'encodeASCII': encodeASCII, // not used
-	'encodeNonASCII': encodeNonASCII,
+	'regexEncodeNonASCII': encodeNonASCII,
 	'decodeOverrides': readJSON('decode-map-overrides'),
 	'decodeMap': readJSON('decode-map'),
 	'decodeMapLegacy': readJSON('decode-map-legacy'),
-	'astralSymbol': regenerate().addRange(0x010000, 0x10FFFF).toString(),
 	'invalidReferenceCodePoints': (function() {
 		return jsesc(readJSON('invalid-character-reference-code-points'));
 	}()),
-	'invalidRawCodePoints': regenerate(invalidRawCodePoints).toString(),
 	'invalidCodePointsString': (function() {
 		var string = String.fromCodePoint.apply(0, invalidRawCodePoints);
 		return jsesc(string, { 'wrap': true });
 	}()),
+	'regexInvalidRawCodePoints': regenerate(invalidRawCodePoints).toString(),
+	'regexAstralSymbol': regenerate().addRange(0x010000, 0x10FFFF).toString(),
 	'regexDecimalEscapeSource': '&#([0-9]+)(;?)',
 	'regexHexadecimalEscapeSource': '&#[xX]([a-fA-F0-9]+)(;?)',
 	'regexNamedReferenceSource': '&([0-9a-zA-Z]+);',
@@ -88,7 +88,7 @@ module.exports = {
 			')([=a-zA-Z0-9])?';
 	}()),
 	'regexLoneSurrogate': '[\\uD800-\\uDBFF](?:[^\\uDC00-\\uDFFF]|$)|(?:[^\\uD800-\uDBFF]|^)[\\uDC00-\\uDFFF]',
-	'ascii': (function() {
+	'regexASCII': (function() {
 		return regenerate()
 			// Add all ASCII symbols (not just printable ASCII).
 			.addRange(0x0, 0x7F)
@@ -97,14 +97,14 @@ module.exports = {
 			.remove(overrides)
 			.toString();
 	}()),
-	'otherBMP': (function() {
+	'regexOtherBMP': (function() {
 		return regenerate()
 			// Add all BMP symbols.
 			.addRange(0x0, 0xFFFF)
 			// Remove ASCII newlines.
 			.remove('\r', '\n')
 			// Remove printable ASCII symbols.
-			.removeRange(0x20, 0x7F)
+			.removeRange(0x20, 0x7E)
 			// Remove code points listed in the first column of the overrides table.
 			// http://whatwg.org/html/tokenization.html#table-charref-overrides
 			.remove(overrides)

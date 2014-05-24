@@ -18,28 +18,25 @@
 	/*--------------------------------------------------------------------------*/
 
 	// All astral symbols.
-	var regexAstralSymbols = /<%= astralSymbol %>/g;
+	var regexAstralSymbols = /<%= regexAstralSymbol %>/g;
 	// All ASCII symbols (not just printable ASCII) except those listed in the
 	// first column of the overrides table.
 	// http://whatwg.org/html/tokenization.html#table-charref-overrides
-	var regexASCII = /<%= ascii %>/g;
-	// BMP symbols that are not one of the following:
-	// * newlines
-	// * printable ASCII symbols
-	// * code points listed in the first column of the overrides table
-	//   http://whatwg.org/html/tokenization.html#table-charref-overrides
-	//var regexNonASCII = /[^\n\r\x20-\x7F]/g;
-	var regexNonASCII = /<%= otherBMP %>/g;
+	var regexASCII = /<%= regexASCII %>/g;
+	// All BMP symbols that are not ASCII newlines, printable ASCII symbols, or
+	// code points listed in the first column of the overrides table on
+	// http://whatwg.org/html/tokenization.html#table-charref-overrides.
+	var regexOtherBMP = /<%= regexOtherBMP %>/g;
 
-	var regexEncodeNonASCII = /<%= encodeNonASCII %>/g;
+	var regexEncodeNonASCII = /<%= regexEncodeNonASCII %>/g;
 	var encodeMap = <%= encodeMap %>;
 
 	var regexEscape = /["&'<>`]/g;
 	var escapeMap = {
-		'&': '&amp;',
-		'<': '&lt;',
 		'"': '&quot;',
+		'&': '&amp;',
 		'\'': '&#x27;',
+		'<': '&lt;',
 		// See http://mathiasbynens.be/notes/ambiguous-ampersands: in HTML, the
 		// following is not strictly necessary unless it’s part of a tag or an
 		// unquoted attribute value. We’re only escaping it to support those
@@ -54,7 +51,7 @@
 
 	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
 	var regexInvalidRawCodePoint = /<%=
-		invalidRawCodePoints
+		regexInvalidRawCodePoints
 	%>|<%=
 		// http://whatwg.org/html/parsing.html#preprocessing-the-input-stream
 		// “Any character that is a not a Unicode character, i.e. any isolated
@@ -217,7 +214,7 @@
 			})
 			// Encode any remaining BMP symbols that are not printable ASCII symbols
 			// using a hexadecimal escape.
-			.replace(regexNonASCII, hexEscape);
+			.replace(regexOtherBMP, hexEscape);
 	};
 	// Expose default options (so they can be overridden globally).
 	encode.options = {
