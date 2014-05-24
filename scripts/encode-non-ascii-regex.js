@@ -1,6 +1,6 @@
 var jsesc = require('jsesc');
 var regenerate = require('regenerate');
-var difference = require('lodash.difference');
+var difference = require('lodash').difference;
 
 var joinStrings = function(a, b) {
 	if (a && b) {
