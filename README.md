@@ -64,11 +64,18 @@ A string representing the semantic version number.
 
 ### `he.encode(text, options)`
 
-This function takes a string of text and encodes (by default) any symbols that aren’t printable ASCII symbols, replacing them with character references. As long as the input string contains [allowed code points](http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#preprocessing-the-input-stream) only, the return value of this function is always valid HTML.
+This function takes a string of text and encodes (by default) any symbols that aren’t printable ASCII symbols and `&`, `<`, `>`, `"`, `'`, and `` ` ``, replacing them with character references.
 
 ```js
 he.encode('foo © bar ≠ baz 𝌆 qux');
 // → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
+```
+
+As long as the input string contains [allowed code points](http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#preprocessing-the-input-stream) only, the return value of this function is always valid HTML. Any [(invalid) code points that cannot be represented using a character reference](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#table-charref-overrides) in the input are not encoded.
+
+```js
+he.encode('foo \0 bar');
+// → 'foo \0 bar'
 ```
 
 The `options` object is optional. It recognizes the following properties:
@@ -126,17 +133,17 @@ The default value for the `strict` option is `false`. This means that `encode()`
 
 ```js
 // Using the global default setting (defaults to `false`, i.e. error-tolerant mode):
-he.encode('\0');
-// → '&#x0;'
+he.encode('\x01');
+// → '&#x1;'
 
 // Passing an `options` object to `encode`, to explicitly enable error-tolerant mode:
-he.encode('\0', {
+he.encode('\x01', {
   'strict': false
 });
-// → '&#x0;'
+// → '&#x1;'
 
 // Passing an `options` object to `encode`, to explicitly enable strict mode:
-he.encode('\0', {
+he.encode('\x01', {
   'strict': true
 });
 // → Parse error
