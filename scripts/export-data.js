@@ -2,6 +2,7 @@ var fs = require('fs');
 var jsesc = require('jsesc');
 var regenerate = require('regenerate');
 var difference = require('lodash.difference');
+require('string.fromcodepoint');
 
 var readJSON = function(fileName) {
 	var contents = fs.readFileSync('data/' + fileName + '.json', 'utf-8');
@@ -51,6 +52,12 @@ var encodeNonASCII = joinStrings(
 	encodeSingleSymbolsNonASCII
 );
 
+var invalidRawCodePoints = readJSON('invalid-raw-code-points');
+// U+0000 is a parse error in the Data state (which is the state where `he`’s
+// input and output is supposed to end up in), so add it to the set of invalid
+// raw code points. http://whatwg.org/html/tokenization.html#data-state
+invalidRawCodePoints.unshift(0x0000);
+
 module.exports = {
 	'encodeMap': readJSON('encode-map'),
 	'encodeASCII': encodeASCII, // not used
@@ -59,11 +66,21 @@ module.exports = {
 	'decodeMap': readJSON('decode-map'),
 	'decodeMapLegacy': readJSON('decode-map-legacy'),
 	'astralSymbol': regenerate().addRange(0x010000, 0x10FFFF).toString(),
-	'invalidCodePoints': jsesc(readJSON('invalid-code-points')),
+	'invalidReferenceCodePoints': (function() {
+		return jsesc(readJSON('invalid-character-reference-code-points'));
+	}()),
+	'invalidRawCodePoints': regenerate(invalidRawCodePoints).toString(),
+	'invalidCodePointsString': (function() {
+		var string = String.fromCodePoint.apply(0, invalidRawCodePoints);
+		return jsesc(string, { 'wrap': true });
+	}()),
 	'regexDecimalEscapeSource': '&#([0-9]+)(;?)',
 	'regexHexadecimalEscapeSource': '&#[xX]([a-fA-F0-9]+)(;?)',
 	'regexNamedReferenceSource': '&([0-9a-zA-Z]+);',
-	'regexLegacyReferenceSource': '&(' +
-		readJSON('decode-legacy-named-references').join('|') + ')([=a-zA-Z0-9])?',
+	'regexLegacyReferenceSource': (function() {
+		return '&(' + readJSON('decode-legacy-named-references').join('|') +
+			')([=a-zA-Z0-9])?';
+	}()),
+	'testData': fs.readFileSync('data/entities.json', 'utf-8').trim(),
 	'version': JSON.parse(fs.readFileSync('package.json', 'utf-8')).version
 };

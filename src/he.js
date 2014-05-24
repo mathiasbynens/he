@@ -1,15 +1,15 @@
 /*! http://mths.be/he v<%= version %> by @mathias | MIT license */
 ;(function(root) {
 
-	// Detect free variables `exports`
+	// Detect free variables `exports`.
 	var freeExports = typeof exports == 'object' && exports;
 
-	// Detect free variable `module`
+	// Detect free variable `module`.
 	var freeModule = typeof module == 'object' && module &&
 		module.exports == freeExports && module;
 
 	// Detect free variable `global`, from Node.js or Browserified code,
-	// and use it as `root`
+	// and use it as `root`.
 	var freeGlobal = typeof global == 'object' && global;
 	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
 		root = freeGlobal;
@@ -17,9 +17,12 @@
 
 	/*--------------------------------------------------------------------------*/
 
+	// All astral symbols.
 	var regexAstralSymbols = /<%= astralSymbol %>/g;
+	// All ASCII symbols (not just printable ASCII).
 	var regexASCII = /[\0-\x7F]/g;
-	var regexNonASCII = /[^\0-\x7F]/g;
+	// BMP symbols that are not newlines or printable ASCII symbols.
+	var regexNonASCII = /[^\n\r\x20-\x7F]/g;
 
 	var regexEncodeNonASCII = /<%= encodeNonASCII %>/g;
 	var encodeMap = <%= encodeMap %>;
@@ -36,13 +39,14 @@
 		// situations, and for XML support.
 		'>': '&gt;',
 		// In Internet Explorer ≤ 8, the backtick character can be used
-		// to break out of unquoted attribute values or HTML comments.
+		// to break out of (un)quoted attribute values or HTML comments.
 		// See http://html5sec.org/#102, http://html5sec.org/#108, and
 		// http://html5sec.org/#133.
 		'`': '&#x60;'
 	};
 
 	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
+	var regexInvalidRawCodePoint = /<%= invalidRawCodePoints %>/;
 	var regexDecode = /<%=
 		regexDecimalEscapeSource
 	%>|<%=
@@ -55,7 +59,7 @@
 	var decodeMap = <%= decodeMap %>;
 	var decodeMapLegacy = <%= decodeMapLegacy %>;
 	var decodeMapNumeric = <%= decodeOverrides %>;
-	var invalidCodePoints = <%= invalidCodePoints %>;
+	var invalidReferenceCodePoints = <%= invalidReferenceCodePoints %>;
 
 	/*--------------------------------------------------------------------------*/
 
@@ -82,17 +86,17 @@
 		if (!options) {
 			return defaults;
 		}
-		var key;
 		var result = {};
+		var key;
 		for (key in defaults) {
-			// `hasOwnProperty` check is not needed here, since only recognized
-			// option names are used
+			// A `hasOwnProperty` check is not needed here, since only recognized
+			// option names are used anyway. Any others are ignored.
 			result[key] = has(options, key) ? options[key] : defaults[key];
 		}
 		return result;
 	};
 
-	// Modified version of `ucs2encode`; see http://mths.be/punycode
+	// Modified version of `ucs2encode`; see http://mths.be/punycode.
 	var codePointToSymbol = function(codePoint, strict) {
 		var output = '';
 		if ((codePoint >= 0xD800 && codePoint <= 0xDFFF) || codePoint > 0x10FFFF) {
@@ -111,7 +115,7 @@
 			}
 			return decodeMapNumeric[codePoint];
 		}
-		if (strict && contains(invalidCodePoints, codePoint)) {
+		if (strict && contains(invalidReferenceCodePoints, codePoint)) {
 			parseError('disallowed character reference');
 		}
 		if (codePoint > 0xFFFF) {
@@ -135,55 +139,61 @@
 
 	var encode = function(string, options) {
 		options = merge(options, encode.options);
+		var strict = options.strict;
+		if (strict && regexInvalidRawCodePoint.test(string)) {
+			parseError('forbidden code point');
+		}
 		var encodeEverything = options.encodeEverything;
 		var useNamedReferences = options.useNamedReferences;
 		if (encodeEverything) {
-			// Encode ASCII symbols
+			// Encode ASCII symbols.
 			string = string.replace(regexASCII, function(symbol) {
-				// Use named references if requested & possible
+				// Use named references if requested & possible.
 				if (useNamedReferences && has(encodeMap, symbol)) {
 					return '&' + encodeMap[symbol] + ';';
 				}
 				return hexEscape(symbol);
 			});
 			// Shorten a few escapes that represent two symbols, of which at least one
-			// is within the ASCII range
+			// is within the ASCII range.
 			if (useNamedReferences) {
 				string = string
 					.replace(/&gt;\u20D2/g, '&nvgt;')
 					.replace(/&lt;\u20D2/g, '&nvlt;')
 					.replace(/&#x66;&#x6A;/g, '&fjlig;');
 			}
-			// Encode non-ASCII symbols
+			// Encode non-ASCII symbols.
 			if (useNamedReferences) {
-				// Encode non-ASCII symbols that can be replaced with a named reference
+				// Encode non-ASCII symbols that can be replaced with a named reference.
 				string = string.replace(regexEncodeNonASCII, function(string) {
-					return '&' + encodeMap[string] + ';'; // no need to check `has()` here
+					// Note: there is no need to check `has(encodeMap, string)` here.
+					return '&' + encodeMap[string] + ';';
 				});
 			}
-			// Note: any remaining non-ASCII symbols are handled outside of the `if`
+			// Note: any remaining non-ASCII symbols are handled outside of the `if`.
 		} else if (useNamedReferences) {
-			// Apply named character references
-			// Encode `<>"'&` using named character references
+			// Apply named character references.
+			// Encode `<>"'&` using named character references.
 			string = string.replace(regexEscape, function(string) {
 				return '&' + encodeMap[string] + ';'; // no need to check `has()` here
 			});
 			// Shorten escapes that represent two symbols, of which at least one is
-			// `<>"'&`
+			// `<>"'&`.
 			string = string
 				.replace(/&gt;\u20D2/g, '&nvgt;')
 				.replace(/&lt;\u20D2/g, '&nvlt;');
-			// Encode non-ASCII symbols that can be replaced with a named reference
+			// Encode non-ASCII symbols that can be replaced with a named reference.
 			string = string.replace(regexEncodeNonASCII, function(string) {
-				return '&' + encodeMap[string] + ';'; // no need to check `has()` here
+				// Note: there is no need to check `has(encodeMap, string)` here.
+				return '&' + encodeMap[string] + ';';
 			});
 		} else {
 			// Encode `<>"'&` using hexadecimal escapes, now that they’re not handled
-			// using named character references
+			// using named character references.
 			string = string.replace(regexEscape, hexEscape);
 		}
 		return string
-			// Encode astral symbols
+			// Encode astral symbols.
 			.replace(regexAstralSymbols, function($0) {
 				// http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
 				var high = $0.charCodeAt(0);
@@ -191,13 +201,15 @@
 				var codePoint = (high - 0xD800) * 0x400 + low - 0xDC00 + 0x10000;
 				return '&#x' + codePoint.toString(16).toUpperCase() + ';';
 			})
-			// Encode any remaining non-ASCII symbols using a hexadecimal escape
+			// Encode any remaining BMP symbols that are not printable ASCII symbols
+			// using a hexadecimal escape.
 			.replace(regexNonASCII, hexEscape);
 	};
-	// Expose default options (so they can be overridden globally)
+	// Expose default options (so they can be overridden globally).
 	encode.options = {
-		'useNamedReferences': false,
-		'encodeEverything': false
+		'encodeEverything': false,
+		'strict': false,
+		'useNamedReferences': false
 	};
 
 	var decode = function(html, options) {
@@ -213,7 +225,7 @@
 			var reference;
 			var next;
 			if ($1) {
-				// Decode decimal escapes, e.g. `&#119558;`
+				// Decode decimal escapes, e.g. `&#119558;`.
 				codePoint = $1;
 				semicolon = $2;
 				if (strict && !semicolon) {
@@ -222,7 +234,7 @@
 				return codePointToSymbol(codePoint, strict);
 			}
 			if ($3) {
-				// Decode hexadecimal escapes, e.g. `&#x1D306;`
+				// Decode hexadecimal escapes, e.g. `&#x1D306;`.
 				hexDigits = $3;
 				semicolon = $4;
 				if (strict && !semicolon) {
@@ -232,12 +244,12 @@
 				return codePointToSymbol(codePoint, strict);
 			}
 			if ($5) {
-				// Decode named character references with trailing `;`, e.g. `&copy;`
+				// Decode named character references with trailing `;`, e.g. `&copy;`.
 				reference = $5;
 				if (has(decodeMap, reference)) {
 					return decodeMap[reference];
 				} else {
-					// ambiguous ampersand; see http://mths.be/notes/ambiguous-ampersands
+					// Ambiguous ampersand; see http://mths.be/notes/ambiguous-ampersands.
 					if (strict) {
 						parseError(
 							'named character reference was not terminated by a semicolon'
@@ -264,12 +276,12 @@
 						'named character reference was not terminated by a semicolon'
 					);
 				}
-				// no need to check `has()` here
+				// Note: there is no need to check `has(decodeMapLegacy, reference)`.
 				return decodeMapLegacy[reference] + (next || '');
 			}
 		});
 	};
-	// Expose default options (so they can be overridden globally)
+	// Expose default options (so they can be overridden globally).
 	decode.options = {
 		'isAttributeValue': false,
 		'strict': false
@@ -277,7 +289,8 @@
 
 	var escape = function(string) {
 		return string.replace(regexEscape, function($0) {
-			return escapeMap[$0]; // no need to check `has()` here
+			// Note: there is no need to check `has(escapeMap, $0)` here.
+			return escapeMap[$0];
 		});
 	};
 

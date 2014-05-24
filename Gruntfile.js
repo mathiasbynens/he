@@ -60,10 +60,7 @@ module.exports = function(grunt) {
 			'build-tests': {
 				'options': {
 					'data': function() {
-						return {
-							'testData': require('fs')
-								.readFileSync('data/entities.json', 'utf-8').trim()
-						}
+						return require('./scripts/export-data.js');
 					}
 				},
 				'files': {
