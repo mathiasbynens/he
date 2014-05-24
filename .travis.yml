@@ -16,3 +16,5 @@ before_script:
   - "PREFIX=/usr/lib/jvm; if [ ! -d $PREFIX/java-6-openjdk ]; then for d in $PREFIX/java-6-openjdk-*; do if [ -e $d/jre/lib/rt.jar ]; then sudo ln -s $d $PREFIX/java-6-openjdk; break; fi; done; fi"
 script:
   "grunt ci"
+after_script:
+  - grunt shell:cover-coveralls
