@@ -117,6 +117,10 @@ open('http://www.whatwg.org/specs/web-apps/current-work/', function() {
 		rawCodePoints = rawCodePoints.sort(function(a, b) {
 			return a - b;
 		});
+		// U+0000 is a parse error in the Data state (which is the state where `he`’s
+		// input and output is supposed to end up in), so add it to the set of invalid
+		// raw code points. http://whatwg.org/html/tokenization.html#data-state
+		rawCodePoints.unshift(0x0000);
 
 		// Pass everything back to PhantomJS.
 		return JSON.stringify({
@@ -127,7 +131,10 @@ open('http://www.whatwg.org/specs/web-apps/current-work/', function() {
 
 	}));
 
-	writeJSON('data/decode-map-overrides.json', result.overrides);
+	var overrides = result.overrides;
+	var overrideCodePoints = Object.keys(overrides).map(Number);
+	writeJSON('data/decode-map-overrides.json', overrides);
+	writeJSON('data/decode-code-points-overrides.json', overrideCodePoints);
 	writeJSON('data/invalid-character-reference-code-points.json', result.charRefCodePoints);
 	writeJSON('data/invalid-raw-code-points.json', result.rawCodePoints);
 	// Note: `invalid-character-reference-code-points.json` is identical to

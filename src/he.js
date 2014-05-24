@@ -22,13 +22,13 @@
 	// All ASCII symbols (not just printable ASCII) except those listed in the
 	// first column of the overrides table.
 	// http://whatwg.org/html/tokenization.html#table-charref-overrides
-	var regexASCII = /<%= regexASCII %>/g;
+	var regexAsciiWhitelist = /<%= regexAsciiWhitelist %>/g;
 	// All BMP symbols that are not ASCII newlines, printable ASCII symbols, or
 	// code points listed in the first column of the overrides table on
 	// http://whatwg.org/html/tokenization.html#table-charref-overrides.
-	var regexOtherBMP = /<%= regexOtherBMP %>/g;
+	var regexBmpWhitelist = /<%= regexBmpWhitelist %>/g;
 
-	var regexEncodeNonASCII = /<%= regexEncodeNonASCII %>/g;
+	var regexEncodeNonAscii = /<%= regexEncodeNonAscii %>/g;
 	var encodeMap = <%= encodeMap %>;
 
 	var regexEscape = /["&'<>`]/g;
@@ -158,7 +158,7 @@
 		var useNamedReferences = options.useNamedReferences;
 		if (encodeEverything) {
 			// Encode ASCII symbols.
-			string = string.replace(regexASCII, function(symbol) {
+			string = string.replace(regexAsciiWhitelist, function(symbol) {
 				// Use named references if requested & possible.
 				if (useNamedReferences && has(encodeMap, symbol)) {
 					return '&' + encodeMap[symbol] + ';';
@@ -176,7 +176,7 @@
 			// Encode non-ASCII symbols.
 			if (useNamedReferences) {
 				// Encode non-ASCII symbols that can be replaced with a named reference.
-				string = string.replace(regexEncodeNonASCII, function(string) {
+				string = string.replace(regexEncodeNonAscii, function(string) {
 					// Note: there is no need to check `has(encodeMap, string)` here.
 					return '&' + encodeMap[string] + ';';
 				});
@@ -194,7 +194,7 @@
 				.replace(/&gt;\u20D2/g, '&nvgt;')
 				.replace(/&lt;\u20D2/g, '&nvlt;');
 			// Encode non-ASCII symbols that can be replaced with a named reference.
-			string = string.replace(regexEncodeNonASCII, function(string) {
+			string = string.replace(regexEncodeNonAscii, function(string) {
 				// Note: there is no need to check `has(encodeMap, string)` here.
 				return '&' + encodeMap[string] + ';';
 			});
@@ -214,7 +214,7 @@
 			})
 			// Encode any remaining BMP symbols that are not printable ASCII symbols
 			// using a hexadecimal escape.
-			.replace(regexOtherBMP, hexEscape);
+			.replace(regexBmpWhitelist, hexEscape);
 	};
 	// Expose default options (so they can be overridden globally).
 	encode.options = {
