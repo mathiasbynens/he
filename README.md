@@ -179,7 +179,7 @@ The `options` object is optional. It recognizes the following properties:
 
 #### `isAttributeValue`
 
-The default value for the `isAttributeValue` option is `false`. This means that `decode()` will decode the string as if it were used in a text context in an HTML document. HTML has different rules for parsing character references in attribute values — set this option to `true` to treat the input string as if it were used as an attribute value.
+The default value for the `isAttributeValue` option is `false`. This means that `decode()` will decode the string as if it were used in [a text context in an HTML document](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#data-state). HTML has different rules for [parsing character references in attribute values](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#character-reference-in-attribute-value-state) — set this option to `true` to treat the input string as if it were used as an attribute value.
 
 ```js
 // Using the global default setting (defaults to `false`, i.e. HTML text context):
