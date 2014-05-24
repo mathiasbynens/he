@@ -1,7 +1,4 @@
-var fs = require('fs');
 var jsesc = require('jsesc');
-var regenerate = require('regenerate');
-var difference = require('lodash.difference');
 
 var formatJSON = function(fileName) {
 	var object = require('../data/' + fileName + '.json');
