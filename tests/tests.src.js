@@ -6418,12 +6418,12 @@
 			'Encode U+1D306 as `&#x1D306;` when `encodeEverything: true, useNamedReferences: true`'
 		);
 		equal(
-			he.encode('a&b123;+©>\u20D2<\u20D2\nfja', { 'encodeEverything': true, 'useNamedReferences': false }),
+			he.encode('a&b123;+\xA9>\u20D2<\u20D2\nfja', { 'encodeEverything': true, 'useNamedReferences': false }),
 			'&#x61;&#x26;&#x62;&#x31;&#x32;&#x33;&#x3B;&#x2B;&#xA9;&#x3E;&#x20D2;&#x3C;&#x20D2;&#xA;&#x66;&#x6A;&#x61;',
 			'All kinds of symbols when `encodeEverything: true, useNamedReferences: false`'
 		);
 		equal(
-			he.encode('a&b123;+©>\u20D2<\u20D2\nfja', { 'encodeEverything': true, 'useNamedReferences': true }),
+			he.encode('a&b123;+\xA9>\u20D2<\u20D2\nfja', { 'encodeEverything': true, 'useNamedReferences': true }),
 			'&#x61;&amp;&#x62;&#x31;&#x32;&#x33;&semi;&plus;&copy;&nvgt;&nvlt;&NewLine;&fjlig;&#x61;',
 			'All kinds of symbols when `encodeEverything: true, useNamedReferences: true`'
 		);

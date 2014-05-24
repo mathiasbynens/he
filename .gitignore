@@ -1,5 +1,5 @@
-# JSON version of coverage report
-coverage/coverage.json
+# Coverage report
+coverage
 
 # Installed npm modules
 node_modules

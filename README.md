@@ -1,4 +1,4 @@
-# he [![Build status](https://travis-ci.org/mathiasbynens/he.svg?branch=master)](https://travis-ci.org/mathiasbynens/he) [![Dependency status](https://gemnasium.com/mathiasbynens/he.svg)](https://gemnasium.com/mathiasbynens/he)
+# he [![Build status](https://travis-ci.org/mathiasbynens/he.svg?branch=master)](https://travis-ci.org/mathiasbynens/he) [![Code coverage status](http://img.shields.io/coveralls/mathiasbynens/he/master.svg)](https://coveralls.io/r/mathiasbynens/he) [![Dependency status](https://gemnasium.com/mathiasbynens/he.svg)](https://gemnasium.com/mathiasbynens/he)
 
 _he_ (for “HTML entities”) is a robust HTML entity encoder/decoder written in JavaScript. It supports [all standardized named character references as per HTML](http://www.whatwg.org/specs/web-apps/current-work/multipage/named-character-references.html), handles [ambiguous ampersands](http://mathiasbynens.be/notes/ambiguous-ampersands) and other edge cases [just like a browser would](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#tokenizing-character-references), has an extensive test suite, and — contrary to many other JavaScript solutions — _he_ handles astral Unicode symbols just fine. [An online demo is available.](http://mothereff.in/html-entities)
 
@@ -308,7 +308,7 @@ After cloning this repository, run `npm install` to install the dependencies nee
 
 Once that’s done, you can run the unit tests in Node using `npm test` or `node tests/tests.js`. To run the tests in Rhino, Ringo, Narwhal, and web browsers as well, use `grunt test`.
 
-To generate [the code coverage report](http://rawgithub.com/mathiasbynens/he/master/coverage/he/he.js.html), use `grunt cover`.
+To generate the code coverage report, use `grunt cover`.
 
 ## Acknowledgements
 

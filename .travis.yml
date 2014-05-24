@@ -15,4 +15,6 @@ before_script:
   # If the enviroment stores rt.jar in a different directory, find it and symlink the directory
   - "PREFIX=/usr/lib/jvm; if [ ! -d $PREFIX/java-6-openjdk ]; then for d in $PREFIX/java-6-openjdk-*; do if [ -e $d/jre/lib/rt.jar ]; then sudo ln -s $d $PREFIX/java-6-openjdk; break; fi; done; fi"
 script:
-  "grunt ci"
+  - "grunt ci"
+after_script:
+  - "grunt shell:cover-coveralls"
