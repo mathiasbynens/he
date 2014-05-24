@@ -6428,6 +6428,30 @@
 			'&#x61;&amp;&#x62;&#x31;&#x32;&#x33;&semi;&plus;&copy;&nvgt;&nvlt;&NewLine;&fjlig;&#x61;',
 			'All kinds of symbols when `encodeEverything: true, useNamedReferences: true`'
 		);
+		equal(
+			he.encode('foo\uDC00bar'),
+			'foo&#xDC00;bar',
+			'Lone high surrogate'
+		);
+		raises(
+			function() {
+				he.encode('foo\uDC00bar', { 'strict': true });
+			},
+			Error,
+			'Lone high surrogate triggers parse error when `strict: true`'
+		);
+		equal(
+			he.encode('foo\uD800bar'),
+			'foo&#xD800;bar',
+			'Lone low surrogate'
+		);
+		raises(
+			function() {
+				he.encode('foo\uD800bar', { 'strict': true });
+			},
+			Error,
+			'Lone low surrogate triggers parse error when `strict: true`'
+		);
 		// TODO: This should change as per issue #19.
 		equal(
 			he.encode(<%= invalidCodePointsString %>),
