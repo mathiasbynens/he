@@ -64,7 +64,7 @@ A string representing the semantic version number.
 
 ### `he.encode(text, options)`
 
-This function takes a string of text and encodes (by default) any symbols that aren’t printable ASCII symbols, replacing them with character references. As long as the input string contains allowed code points only, the return value of this function is always valid HTML.
+This function takes a string of text and encodes (by default) any symbols that aren’t printable ASCII symbols, replacing them with character references. As long as the input string contains [allowed code points](http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#preprocessing-the-input-stream) only, the return value of this function is always valid HTML.
 
 ```js
 he.encode('foo © bar ≠ baz 𝌆 qux');
@@ -118,6 +118,28 @@ he.encode('foo © bar ≠ baz 𝌆 qux', {
   'useNamedReferences': true
 });
 // → '&#x66;&#x6F;&#x6F;&#x20;&copy;&#x20;&#x62;&#x61;&#x72;&#x20;&ne;&#x20;&#x62;&#x61;&#x7A;&#x20;&#x1D306;&#x20;&#x71;&#x75;&#x78;'
+```
+
+#### `strict`
+
+The default value for the `strict` option is `false`. This means that `encode()` will encode any HTML text content you feed it, even if it contains any symbols that cause [parse errors](http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#preprocessing-the-input-stream). To throw an error when such invalid HTML is encountered, set the `strict` option to `true`. This option makes it possible to use _he_ as part of HTML parsers and HTML validators.
+
+```js
+// Using the global default setting (defaults to `false`, i.e. error-tolerant mode):
+he.encode('\0');
+// → '&#x0;'
+
+// Passing an `options` object to `encode`, to explicitly enable error-tolerant mode:
+he.encode('\0', {
+  'strict': false
+});
+// → '&#x0;'
+
+// Passing an `options` object to `encode`, to explicitly enable strict mode:
+he.encode('\0', {
+  'strict': true
+});
+// → Parse error
 ```
 
 #### Overriding default `encode` options globally
