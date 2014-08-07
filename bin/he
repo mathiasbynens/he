@@ -23,7 +23,7 @@
 			log([
 				'\nUsage:\n',
 				'\the [--escape] string',
-				'\the [--encode] [--use-named-refs] [--everything] string',
+				'\the [--encode] [--use-named-refs] [--everything] [--allow-unsafe] string',
 				'\the [--decode] [--attribute] [--strict] string',
 				'\the [-v | --version]',
 				'\the [-h | --help]',
@@ -57,6 +57,11 @@
 			if (string == '--everything') {
 				action = 'encode';
 				options.encodeEverything = true;
+				return;
+			}
+			if (string == '--allow-unsafe') {
+				action = 'encode';
+				options.allowUnsafeSymbols = true;
 				return;
 			}
 			if (string == '--decode') {
