@@ -9,7 +9,7 @@
 .br
 .Op Fl -encode Ar string
 .br
-.Op Fl -encode Fl -use-named-refs Fl -everything Ar string
+.Op Fl -encode Fl -use-named-refs Fl -everything Fl -allow-unsafe Ar string
 .br
 .Op Fl -decode Ar string
 .br
@@ -33,6 +33,8 @@ Take a string of text and encode any symbols that aren't printable ASCII symbols
 Enable the use of named character references (like `&copy;`) in the output. If compatibility with older browsers is a concern, don't use this option.
 .It Sy "--encode --everything"
 Encode every symbol in the input string, even safe printable ASCII symbols.
+.It Sy "--encode --allow-unsafe"
+Encode non-ASCII characters only. This leaves unsafe HTML/XML symbols like `&`, `<`, `>`, `"`, and `'` intact.
 .It Sy "--decode"
 Takes a string of HTML and decode any named and numerical character references in it using the algorithm described in the HTML spec.
 .It Sy "--decode --attribute"

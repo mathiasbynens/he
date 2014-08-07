@@ -106,7 +106,7 @@ he.encode('foo © bar ≠ baz 𝌆 qux', {
 
 #### `encodeEverything`
 
-The default value for the `encodeEverything` option is `false`. This means that `encode()` will not use any character references for printable ASCII symbols that don’t need escaping. Set it to `true` to encode every symbol in the input string.
+The default value for the `encodeEverything` option is `false`. This means that `encode()` will not use any character references for printable ASCII symbols that don’t need escaping. Set it to `true` to encode every symbol in the input string. When set to `true`, this option takes precedence over `allowUnsafeSymbols` (i.e. setting the latter to `true` in such a case has no effect).
 
 ```js
 // Using the global default setting (defaults to `false`):
@@ -147,6 +147,17 @@ he.encode('\x01', {
   'strict': true
 });
 // → Parse error
+```
+
+#### `allowUnsafeSymbols`
+
+The default value for the `allowUnsafeSymbols` option is `false`. This means that characters that are unsafe for use in HTML content (`&`, `<`, `>`, `"`, `'`, and `` ` ``) will be encoded. When set to `true`, only non-ASCII characters will be encoded. If the `encodeEverything` option is set to `true`, this option will be ignored.
+
+```js
+he.encode('foo © and & ampersand', {
+  'allowUnsafeSymbols': true
+});
+// → 'foo &#xA9; and & ampersand'
 ```
 
 #### Overriding default `encode` options globally

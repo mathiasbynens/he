@@ -6598,6 +6598,28 @@
 			'\0\x89',
 			'Does not encode invalid code points whose character references would refer to another code point, even when `encodeEverything: true` is used'
 		);
+		equal(
+			he.encode('foo\xA9<bar\uD834\uDF06>baz\u2603"qux', { 'allowUnsafeSymbols': true }),
+			'foo&#xA9;<bar&#x1D306;>baz&#x2603;"qux',
+			'Markup characters pass through when `allowUnsafeSymbols: true`'
+		);
+		equal(
+			he.encode('a<b', { 'allowUnsafeSymbols': true, 'encodeEverything': true }),
+			'&#x61;&#x3C;&#x62;',
+			'`encodeEverything` takes precedence over `allowUnsafeSymbols`'
+		);
+		equal(
+			he.encode('a<\u223E>', { 'allowUnsafeSymbols': true, 'useNamedReferences': true }),
+			'a<&ac;>',
+			'`useNamedReferences` only affects non-ASCII symbols when `allowUnsafeSymbols: true`'
+		)
+		raises(
+			function() {
+				he.encode(<%= stringInvalidCodePoints %>, { 'allowUnsafeSymbols': true, 'strict': true });
+			},
+			Error,
+			'Parse error: forbidden code point when `allowUnsafeSymbols: true` and `strict: true`'
+		);
 	});
 	test('escape', function() {
 		equal(

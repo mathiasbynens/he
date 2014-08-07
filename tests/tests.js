@@ -6598,6 +6598,28 @@
 			'\0\x89',
 			'Does not encode invalid code points whose character references would refer to another code point, even when `encodeEverything: true` is used'
 		);
+		equal(
+			he.encode('foo\xA9<bar\uD834\uDF06>baz\u2603"qux', { 'allowUnsafeSymbols': true }),
+			'foo&#xA9;<bar&#x1D306;>baz&#x2603;"qux',
+			'Markup characters pass through when `allowUnsafeSymbols: true`'
+		);
+		equal(
+			he.encode('a<b', { 'allowUnsafeSymbols': true, 'encodeEverything': true }),
+			'&#x61;&#x3C;&#x62;',
+			'`encodeEverything` takes precedence over `allowUnsafeSymbols`'
+		);
+		equal(
+			he.encode('a<\u223E>', { 'allowUnsafeSymbols': true, 'useNamedReferences': true }),
+			'a<&ac;>',
+			'`useNamedReferences` only affects non-ASCII symbols when `allowUnsafeSymbols: true`'
+		)
+		raises(
+			function() {
+				he.encode('\0\x01\x02\x03\x04\x05\x06\x07\b\x0B\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x7F\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F\uFDD0\uFDD1\uFDD2\uFDD3\uFDD4\uFDD5\uFDD6\uFDD7\uFDD8\uFDD9\uFDDA\uFDDB\uFDDC\uFDDD\uFDDE\uFDDF\uFDE0\uFDE1\uFDE2\uFDE3\uFDE4\uFDE5\uFDE6\uFDE7\uFDE8\uFDE9\uFDEA\uFDEB\uFDEC\uFDED\uFDEE\uFDEF\uFFFE\uFFFF\uD83F\uDFFE\uD83F\uDFFF\uD87F\uDFFE\uD87F\uDFFF\uD8BF\uDFFE\uD8BF\uDFFF\uD8FF\uDFFE\uD8FF\uDFFF\uD93F\uDFFE\uD93F\uDFFF\uD97F\uDFFE\uD97F\uDFFF\uD9BF\uDFFE\uD9BF\uDFFF\uD9FF\uDFFE\uD9FF\uDFFF\uDA3F\uDFFE\uDA3F\uDFFF\uDA7F\uDFFE\uDA7F\uDFFF\uDABF\uDFFE\uDABF\uDFFF\uDAFF\uDFFE\uDAFF\uDFFF\uDB3F\uDFFE\uDB3F\uDFFF\uDB7F\uDFFE\uDB7F\uDFFF\uDBBF\uDFFE\uDBBF\uDFFF\uDBFF\uDFFE\uDBFF\uDFFF', { 'allowUnsafeSymbols': true, 'strict': true });
+			},
+			Error,
+			'Parse error: forbidden code point when `allowUnsafeSymbols: true` and `strict: true`'
+		);
 	});
 	test('escape', function() {
 		equal(

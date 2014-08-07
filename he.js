@@ -141,6 +141,7 @@
 		}
 		var encodeEverything = options.encodeEverything;
 		var useNamedReferences = options.useNamedReferences;
+		var allowUnsafeSymbols = options.allowUnsafeSymbols;
 		if (encodeEverything) {
 			// Encode ASCII symbols.
 			string = string.replace(regexAsciiWhitelist, function(symbol) {
@@ -170,9 +171,11 @@
 		} else if (useNamedReferences) {
 			// Apply named character references.
 			// Encode `<>"'&` using named character references.
-			string = string.replace(regexEscape, function(string) {
-				return '&' + encodeMap[string] + ';'; // no need to check `has()` here
-			});
+			if (!allowUnsafeSymbols) {
+				string = string.replace(regexEscape, function(string) {
+					return '&' + encodeMap[string] + ';'; // no need to check `has()` here
+				});
+			}
 			// Shorten escapes that represent two symbols, of which at least one is
 			// `<>"'&`.
 			string = string
@@ -183,7 +186,7 @@
 				// Note: there is no need to check `has(encodeMap, string)` here.
 				return '&' + encodeMap[string] + ';';
 			});
-		} else {
+		} else if (!allowUnsafeSymbols) {
 			// Encode `<>"'&` using hexadecimal escapes, now that they’re not handled
 			// using named character references.
 			string = string.replace(regexEscape, hexEscape);
@@ -203,6 +206,7 @@
 	};
 	// Expose default options (so they can be overridden globally).
 	encode.options = {
+		'allowUnsafeSymbols': false,
 		'encodeEverything': false,
 		'strict': false,
 		'useNamedReferences': false
