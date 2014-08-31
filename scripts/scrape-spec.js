@@ -23,7 +23,7 @@ var writeJSON = function(fileName, data) {
 open('http://www.whatwg.org/specs/web-apps/current-work/', function() {
 	var result = JSON.parse(page.evaluate(function() {
 
-		// Modified version of `ucs2encode`; see http://mths.be/punycode
+		// Modified version of `ucs2encode`; see https://mths.be/punycode
 		var stringFromCharCode = String.fromCharCode;
 		var codePointToSymbol = function(codePoint) {
 			var output = '';

@@ -1,6 +1,6 @@
 # he [![Build status](https://travis-ci.org/mathiasbynens/he.svg?branch=master)](https://travis-ci.org/mathiasbynens/he) [![Code coverage status](http://img.shields.io/coveralls/mathiasbynens/he/master.svg)](https://coveralls.io/r/mathiasbynens/he) [![Dependency status](https://gemnasium.com/mathiasbynens/he.svg)](https://gemnasium.com/mathiasbynens/he)
 
-_he_ (for “HTML entities”) is a robust HTML entity encoder/decoder written in JavaScript. It supports [all standardized named character references as per HTML](http://www.whatwg.org/specs/web-apps/current-work/multipage/named-character-references.html), handles [ambiguous ampersands](https://mathiasbynens.be/notes/ambiguous-ampersands) and other edge cases [just like a browser would](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#tokenizing-character-references), has an extensive test suite, and — contrary to many other JavaScript solutions — _he_ handles astral Unicode symbols just fine. [An online demo is available.](http://mothereff.in/html-entities)
+_he_ (for “HTML entities”) is a robust HTML entity encoder/decoder written in JavaScript. It supports [all standardized named character references as per HTML](http://www.whatwg.org/specs/web-apps/current-work/multipage/named-character-references.html), handles [ambiguous ampersands](https://mathiasbynens.be/notes/ambiguous-ampersands) and other edge cases [just like a browser would](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#tokenizing-character-references), has an extensive test suite, and — contrary to many other JavaScript solutions — _he_ handles astral Unicode symbols just fine. [An online demo is available.](https://mothereff.in/html-entities)
 
 ## Installation
 
@@ -333,4 +333,4 @@ Thanks to [Simon Pieters](http://simon.html5.org/) ([@zcorpan](https://twitter.c
 
 ## License
 
-_he_ is available under the [MIT](http://mths.be/mit) license.
+_he_ is available under the [MIT](https://mths.be/mit) license.

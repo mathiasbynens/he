@@ -1,4 +1,4 @@
-/*! http://mths.be/he v0.5.0 by @mathias | MIT license */
+/*! https://mths.be/he v0.5.0 by @mathias | MIT license */
 ;(function(root) {
 
 	// Detect free variables `exports`.
@@ -92,7 +92,7 @@
 		return result;
 	};
 
-	// Modified version of `ucs2encode`; see http://mths.be/punycode.
+	// Modified version of `ucs2encode`; see https://mths.be/punycode.
 	var codePointToSymbol = function(codePoint, strict) {
 		var output = '';
 		if ((codePoint >= 0xD800 && codePoint <= 0xDFFF) || codePoint > 0x10FFFF) {
@@ -249,7 +249,7 @@
 				if (has(decodeMap, reference)) {
 					return decodeMap[reference];
 				} else {
-					// Ambiguous ampersand; see http://mths.be/notes/ambiguous-ampersands.
+					// Ambiguous ampersand; see https://mths.be/notes/ambiguous-ampersands.
 					if (strict) {
 						parseError(
 							'named character reference was not terminated by a semicolon'
