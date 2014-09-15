@@ -20,7 +20,7 @@ var writeJSON = function(fileName, data) {
 	console.log(fileName + ' created successfully.');
 };
 
-open('http://www.whatwg.org/specs/web-apps/current-work/', function() {
+open('https://html.spec.whatwg.org/', function() {
 	var result = JSON.parse(page.evaluate(function() {
 
 		// Modified version of `ucs2encode`; see https://mths.be/punycode

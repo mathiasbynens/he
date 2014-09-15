@@ -2,7 +2,7 @@ var fs = require('fs');
 var jsesc = require('jsesc');
 var _ = require('lodash');
 
-// http://www.whatwg.org/specs/web-apps/current-work/entities.json
+// https://html.spec.whatwg.org/entities.json
 var data = require('../data/entities.json');
 
 var encodeMap = {};

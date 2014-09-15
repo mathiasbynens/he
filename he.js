@@ -249,7 +249,7 @@
 				if (has(decodeMap, reference)) {
 					return decodeMap[reference];
 				} else {
-					// Ambiguous ampersand; see https://mths.be/notes/ambiguous-ampersands.
+					// Ambiguous ampersand. https://mths.be/notes/ambiguous-ampersands
 					if (strict) {
 						parseError(
 							'named character reference was not terminated by a semicolon'

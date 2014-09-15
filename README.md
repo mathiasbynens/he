@@ -1,6 +1,6 @@
 # he [![Build status](https://travis-ci.org/mathiasbynens/he.svg?branch=master)](https://travis-ci.org/mathiasbynens/he) [![Code coverage status](http://img.shields.io/coveralls/mathiasbynens/he/master.svg)](https://coveralls.io/r/mathiasbynens/he) [![Dependency status](https://gemnasium.com/mathiasbynens/he.svg)](https://gemnasium.com/mathiasbynens/he)
 
-_he_ (for “HTML entities”) is a robust HTML entity encoder/decoder written in JavaScript. It supports [all standardized named character references as per HTML](http://www.whatwg.org/specs/web-apps/current-work/multipage/named-character-references.html), handles [ambiguous ampersands](https://mathiasbynens.be/notes/ambiguous-ampersands) and other edge cases [just like a browser would](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#tokenizing-character-references), has an extensive test suite, and — contrary to many other JavaScript solutions — _he_ handles astral Unicode symbols just fine. [An online demo is available.](https://mothereff.in/html-entities)
+_he_ (for “HTML entities”) is a robust HTML entity encoder/decoder written in JavaScript. It supports [all standardized named character references as per HTML](https://html.spec.whatwg.org/multipage/syntax.html#named-character-references), handles [ambiguous ampersands](https://mathiasbynens.be/notes/ambiguous-ampersands) and other edge cases [just like a browser would](https://html.spec.whatwg.org/multipage/syntax.html#tokenizing-character-references), has an extensive test suite, and — contrary to many other JavaScript solutions — _he_ handles astral Unicode symbols just fine. [An online demo is available.](https://mothereff.in/html-entities)
 
 ## Installation
 
@@ -71,7 +71,7 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 // → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
 ```
 
-As long as the input string contains [allowed code points](http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#preprocessing-the-input-stream) only, the return value of this function is always valid HTML. Any [(invalid) code points that cannot be represented using a character reference](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#table-charref-overrides) in the input are not encoded.
+As long as the input string contains [allowed code points](https://html.spec.whatwg.org/multipage/parsing.html#preprocessing-the-input-stream) only, the return value of this function is always valid HTML. Any [(invalid) code points that cannot be represented using a character reference](https://html.spec.whatwg.org/multipage/syntax.html#table-charref-overrides) in the input are not encoded.
 
 ```js
 he.encode('foo \0 bar');
@@ -129,7 +129,7 @@ he.encode('foo © bar ≠ baz 𝌆 qux', {
 
 #### `strict`
 
-The default value for the `strict` option is `false`. This means that `encode()` will encode any HTML text content you feed it, even if it contains any symbols that cause [parse errors](http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#preprocessing-the-input-stream). To throw an error when such invalid HTML is encountered, set the `strict` option to `true`. This option makes it possible to use _he_ as part of HTML parsers and HTML validators.
+The default value for the `strict` option is `false`. This means that `encode()` will encode any HTML text content you feed it, even if it contains any symbols that cause [parse errors](https://html.spec.whatwg.org/multipage/parsing.html#preprocessing-the-input-stream). To throw an error when such invalid HTML is encountered, set the `strict` option to `true`. This option makes it possible to use _he_ as part of HTML parsers and HTML validators.
 
 ```js
 // Using the global default setting (defaults to `false`, i.e. error-tolerant mode):
@@ -179,7 +179,7 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 
 ### `he.decode(html, options)`
 
-This function takes a string of HTML and decodes any named and numerical character references in it using [the algorithm described in section 12.2.4.69 of the HTML spec](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#tokenizing-character-references).
+This function takes a string of HTML and decodes any named and numerical character references in it using [the algorithm described in section 12.2.4.69 of the HTML spec](https://html.spec.whatwg.org/multipage/syntax.html#tokenizing-character-references).
 
 ```js
 he.decode('foo &copy; bar &ne; baz &#x1D306; qux');
@@ -190,7 +190,7 @@ The `options` object is optional. It recognizes the following properties:
 
 #### `isAttributeValue`
 
-The default value for the `isAttributeValue` option is `false`. This means that `decode()` will decode the string as if it were used in [a text context in an HTML document](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#data-state). HTML has different rules for [parsing character references in attribute values](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#character-reference-in-attribute-value-state) — set this option to `true` to treat the input string as if it were used as an attribute value.
+The default value for the `isAttributeValue` option is `false`. This means that `decode()` will decode the string as if it were used in [a text context in an HTML document](https://html.spec.whatwg.org/multipage/syntax.html#data-state). HTML has different rules for [parsing character references in attribute values](https://html.spec.whatwg.org/multipage/syntax.html#character-reference-in-attribute-value-state) — set this option to `true` to treat the input string as if it were used as an attribute value.
 
 ```js
 // Using the global default setting (defaults to `false`, i.e. HTML text context):
@@ -212,7 +212,7 @@ he.decode('foo&ampbar', {
 
 #### `strict`
 
-The default value for the `strict` option is `false`. This means that `decode()` will decode any HTML text content you feed it, even if it contains any entities that cause [parse errors](http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#tokenizing-character-references). To throw an error when such invalid HTML is encountered, set the `strict` option to `true`. This option makes it possible to use _he_ as part of HTML parsers and HTML validators.
+The default value for the `strict` option is `false`. This means that `decode()` will decode any HTML text content you feed it, even if it contains any entities that cause [parse errors](https://html.spec.whatwg.org/multipage/syntax.html#tokenizing-character-references). To throw an error when such invalid HTML is encountered, set the `strict` option to `true`. This option makes it possible to use _he_ as part of HTML parsers and HTML validators.
 
 ```js
 // Using the global default setting (defaults to `false`, i.e. error-tolerant mode):
@@ -323,7 +323,7 @@ To generate the code coverage report, use `grunt cover`.
 
 ## Acknowledgements
 
-Thanks to [Simon Pieters](http://simon.html5.org/) ([@zcorpan](https://twitter.com/zcorpan)) for the many suggestions.
+Thanks to [Simon Pieters](https://simon.html5.org/) ([@zcorpan](https://twitter.com/zcorpan)) for the many suggestions.
 
 ## Author
 

@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 				'command': 'istanbul cover --verbose --dir "coverage" "tests/tests.js" && cat coverage/lcov.info | coveralls; rm -rf coverage/lcov*'
 			},
 			'fetch-entities': {
-				'command': 'curl http://www.whatwg.org/specs/web-apps/current-work/entities.json | sed "s/  /\t/g" > data/entities.json'
+				'command': 'curl https://html.spec.whatwg.org/entities.json | sed "s/  /\t/g" > data/entities.json'
 			},
 			'fetch-and-scrape-spec': {
 				'command': 'phantomjs --load-images=no scripts/scrape-spec.js'
