@@ -304,17 +304,7 @@
 		'unescape': decode
 	};
 
-	// Some AMD build optimizers, like r.js, check for specific condition patterns
-	// like the following:
-	if (
-		typeof define == 'function' &&
-		typeof define.amd == 'object' &&
-		define.amd
-	) {
-		define(function() {
-			return he;
-		});
-	}	else if (freeExports && !freeExports.nodeType) {
+	if (freeExports && !freeExports.nodeType) {
 		if (freeModule) { // in Node.js or RingoJS v0.8.0+
 			freeModule.exports = he;
 		} else { // in Narwhal or RingoJS v0.7.0-
@@ -322,7 +312,17 @@
 				has(he, key) && (freeExports[key] = he[key]);
 			}
 		}
-	} else { // in Rhino or a web browser
+	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// like the following:
+	} else if (
+		typeof define == 'function' &&
+		typeof define.amd == 'object' &&
+		define.amd
+	) {
+		define(function() {
+			return he;
+		});
+	}	else { // in Rhino or a web browser
 		root.he = he;
 	}
 
