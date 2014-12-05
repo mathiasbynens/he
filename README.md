@@ -4,7 +4,7 @@ _he_ (for “HTML entities”) is a robust HTML entity encoder/decoder written i
 
 ## Installation
 
-Via [npm](http://npmjs.org/):
+Via [npm](https://www.npmjs.org/):
 
 ```bash
 npm install he
@@ -28,7 +28,7 @@ In a browser:
 <script src="he.js"></script>
 ```
 
-In [Narwhal](http://narwhaljs.org/), [Node.js](http://nodejs.org/), and [RingoJS](http://ringojs.org/):
+In [Narwhal](http://narwhaljs.org/), [Node.js](https://nodejs.org/), and [RingoJS](http://ringojs.org/):
 
 ```js
 var he = require('he');
