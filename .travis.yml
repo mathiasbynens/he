@@ -8,8 +8,8 @@ before_script:
   - "sudo apt-get install -qq openjdk-6-jre"
   - "PACKAGE=rhino1_7R3; wget http://ftp.mozilla.org/pub/mozilla.org/js/$PACKAGE.zip && sudo unzip $PACKAGE -d /opt/ && rm $PACKAGE.zip"
   - "PACKAGE=rhino1_7R3; echo -e '#!/bin/sh\\njava -jar /opt/'$PACKAGE'/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino"
-  - "PACKAGE=ringojs-0.9; wget http://ringojs.org/downloads/$PACKAGE.zip && sudo unzip $PACKAGE -d /opt/ && rm $PACKAGE.zip"
-  - "PACKAGE=ringojs-0.9; sudo ln -s /opt/$PACKAGE/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo"
+  - "PACKAGE=ringojs-0.11; wget https://github.com/ringo/ringojs/releases/download/v0.11.0/$PACKAGE.zip && sudo unzip $PACKAGE -d /opt/ && rm $PACKAGE.zip"
+  - "PACKAGE=ringojs-0.11; sudo ln -s /opt/$PACKAGE/bin/ringo /usr/local/bin/ringo && sudo chmod +x /usr/local/bin/ringo"
   - "PACKAGE=v0.3.2; wget https://github.com/280north/narwhal/archive/$PACKAGE.zip && sudo unzip $PACKAGE -d /opt/ && rm $PACKAGE.zip"
   - "PACKAGE=narwhal-0.3.2; sudo ln -s /opt/$PACKAGE/bin/narwhal /usr/local/bin/narwhal && sudo chmod +x /usr/local/bin/narwhal"
   # If the enviroment stores rt.jar in a different directory, find it and symlink the directory
