@@ -45,6 +45,9 @@ module.exports = function(grunt) {
 			'test-node': {
 				'command': 'echo "Testing in Node..."; node "tests/tests.js"'
 			},
+			'test-iojs': {
+				'command': 'echo "Testing in io.js..."; iojs "tests/tests.js"'
+			},
 			'test-browser': {
 				'command': 'echo "Testing in a browser..."; open "tests/index.html"'
 			}
@@ -82,7 +85,8 @@ module.exports = function(grunt) {
 		'shell:test-phantomjs',
 		'shell:test-rhino',
 		'shell:test-ringo',
-		'shell:test-node'
+		'shell:test-node',
+		'shell:test-iojs'
 	]);
 	grunt.registerTask('test', [
 		'ci',
