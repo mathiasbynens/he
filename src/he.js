@@ -21,11 +21,11 @@
 	var regexAstralSymbols = /<%= regexAstralSymbol %>/g;
 	// All ASCII symbols (not just printable ASCII) except those listed in the
 	// first column of the overrides table.
-	// http://whatwg.org/html/tokenization.html#table-charref-overrides
+	// https://html.spec.whatwg.org/multipage/syntax.html#table-charref-overrides
 	var regexAsciiWhitelist = /<%= regexAsciiWhitelist %>/g;
 	// All BMP symbols that are not ASCII newlines, printable ASCII symbols, or
 	// code points listed in the first column of the overrides table on
-	// http://whatwg.org/html/tokenization.html#table-charref-overrides.
+	// https://html.spec.whatwg.org/multipage/syntax.html#table-charref-overrides.
 	var regexBmpWhitelist = /<%= regexBmpWhitelist %>/g;
 
 	var regexEncodeNonAscii = /<%= regexEncodeNonAscii %>/g;
@@ -50,14 +50,7 @@
 	};
 
 	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
-	var regexInvalidRawCodePoint = /<%=
-		regexInvalidRawCodePoints
-	%>|<%=
-		// http://whatwg.org/html/parsing.html#preprocessing-the-input-stream
-		// “Any character that is a not a Unicode character, i.e. any isolated
-		// surrogate, is a parse error.”
-		regexLoneSurrogate
-	%>/;
+	var regexInvalidRawCodePoint = /<%= regexInvalidRawCodePoints %>/;
 	var regexDecode = /<%=
 		regexDecimalEscapeSource
 	%>|<%=
@@ -330,7 +323,7 @@
 			return he;
 		});
 	}	else if (freeExports && !freeExports.nodeType) {
-		if (freeModule) { // in Node.js or RingoJS v0.8.0+
+		if (freeModule) { // in Node.js, io.js, or RingoJS v0.8.0+
 			freeModule.exports = he;
 		} else { // in Narwhal or RingoJS v0.7.0-
 			for (var key in he) {

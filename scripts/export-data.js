@@ -22,7 +22,6 @@ module.exports = {
 	'regexHexadecimalEscapeSource': '&#[xX]([a-fA-F0-9]+)(;?)',
 	'regexInvalidRawCodePoints': require('./invalid-code-points-regex.js'),
 	'regexLegacyReferenceSource': require('./legacy-reference-regex.js'),
-	'regexLoneSurrogate': '[\\uD800-\\uDBFF](?![\\uDC00-\\uDFFF])|(?:[^\\uD800-\\uDBFF]|^)[\\uDC00-\\uDFFF]',
 	'regexNamedReferenceSource': '&([0-9a-zA-Z]+);',
 	'stringInvalidCodePoints': require('./invalid-code-points-string.js'),
 	'testDataMap': formatJSON('entities'),

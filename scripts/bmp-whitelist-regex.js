@@ -10,6 +10,6 @@ var regexBmpWhitelist = regenerate()
 	// Remove code points listed in the first column of the overrides table.
 	// http://whatwg.org/html/tokenization.html#table-charref-overrides
 	.remove(require('../data/decode-code-points-overrides.json'))
-	.toString();
+	.toString({ 'bmpOnly': true });
 
 module.exports = regexBmpWhitelist;
