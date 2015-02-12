@@ -31,12 +31,12 @@
 				'\the --escape \\<img\\ src\\=\\\'x\\\'\\ onerror\\=\\"prompt\\(1\\)\\"\\>',
 				'\techo \'&copy; &#x1D306;\' | he --decode'
 			].join('\n'));
-			return process.exit(1);
+			return process.exit(option ? 0 : 1);
 		}
 
 		if (/^(?:-v|--version)$/.test(option)) {
 			log('v%s', he.version);
-			return process.exit(1);
+			return process.exit(0);
 		}
 
 		strings.forEach(function(string) {

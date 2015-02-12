@@ -54,12 +54,10 @@ utility exits with one of the following values:
 .Bl -tag -width flag -compact
 .It Li 0
 .Nm
-successfully encoded/decoded the input and printed the result.
+did what it was instructed to do successfully; either it encoded/decoded the input and printed the result, or it printed the version or usage message.
 .It Li 1
 .Nm
-wasn't instructed to encode/decode anything (for example, the
-.Ar --help
-flag was set); or, an error occurred.
+encountered an error.
 .El
 .Sh EXAMPLES
 .Bl -ohang -offset
