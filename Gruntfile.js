@@ -28,9 +28,6 @@ module.exports = function(grunt) {
 			'test-phantomjs': {
 				'command': 'echo "Testing in PhantomJS..."; phantomjs "tests/tests.js"'
 			},
-			// Rhino 1.7R4 has a bug that makes it impossible to test he.
-			// https://bugzilla.mozilla.org/show_bug.cgi?id=775566
-			// To test, use Rhino 1.7R3, or wait (heh) for the 1.7R5 release.
 			'test-rhino': {
 				'command': 'echo "Testing in Rhino..."; rhino -opt -1 "tests.js"',
 				'options': {
