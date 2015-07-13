@@ -6620,6 +6620,70 @@
 			Error,
 			'Parse error: forbidden code point when `allowUnsafeSymbols: true` and `strict: true`'
 		);
+		equal(
+			he.encode('\xE4\xF6\xFC\xC4\xD6\xDC', { 'decimal': true}),
+			'&#228;&#246;&#252;&#196;&#214;&#220;',
+			'encode to decimal HTML entities'
+		);
+		equal(
+			he.encode('\xE4\xF6\xFC\xC4\xD6\xDC', { 'decimal': true, 'useNamedReferences': true }),
+			'&auml;&ouml;&uuml;&Auml;&Ouml;&Uuml;',
+			'encode to named HTML entities whereby `useNamedReferences` takes precedence over `decimal`'
+		);
+		equal(
+			he.encode('a<b', { 'decimal': true, 'encodeEverything': true }),
+			'&#97;&#60;&#98;',
+			'`encodeEverything` to decimal HTML entities'
+		);
+		equal(
+			he.encode('\0\x89', {'decimal': true}),
+			'\0\x89',
+			'Does not encode invalid code points whose character references would refer to another code point, neither if `decimal`: true is used'
+		);
+		equal(
+			he.encode('\0\x89', { 'decimal': true, 'encodeEverything': true }),
+			'\0\x89',
+			'Does not encode invalid code points whose character references would refer to another code point, even when `encodeEverything: true` and `decimal: true` is used'
+		);
+		equal(
+			he.encode('foo\xA9<bar\uD834\uDF06>baz\u2603"qux', { 'decimal': true, 'allowUnsafeSymbols': true }),
+			'foo&#169;<bar&#119558;>baz&#9731;"qux',
+			'Markup characters pass through when `allowUnsafeSymbols: true`, non-ASCII symbols are encoded to decimal HTML entities'
+		);
+		equal(
+			he.encode('a<b', { 'decimal': true, 'encodeEverything': true, 'allowUnsafeSymbols': true }),
+			'&#97;&#60;&#98;',
+			'`encodeEverything` to decimal HTML entities whereby `encodeEverything` takes precedence over `allowUnsafeSymbols`'
+		);
+		equal(
+			he.encode('a<\xE4>', { 'decimal': true, 'allowUnsafeSymbols': true, 'useNamedReferences': true }),
+			'a<&auml;>',
+			'encode to named HTML entities whereby `useNamedReferences` takes precedence over `decimal`,unsafe symbols allowed'
+		);
+		equal(
+			he.encode('a<\u223E>', { 'decimal': true, 'allowUnsafeSymbols': true }),
+			'a<&#8766;>',
+			'`decimal` only affects non-ASCII symbols when `allowUnsafeSymbols: true`'
+		)
+		raises(
+			he.encode('a<\xE4>', { 'decimal': true, 'allowUnsafeSymbols': false}),
+			'a<&auml;>',
+			'Parse error: unsafe symbols are not allowed'
+		);
+		raises(
+			function() {
+				he.encode(<%= stringInvalidCodePoints %>, { 'decimal': true, 'strict': true });
+			},
+			Error,
+			'Parse error: forbidden code point when `decimal: true`, `strict: true`'
+		);
+		raises(
+			function() {
+				he.encode(<%= stringInvalidCodePoints %>, { 'decimal': true, 'allowUnsafeSymbols': true, 'strict': true });
+			},
+			Error,
+			'Parse error: forbidden code point when `decimal: true`, `allowUnsafeSymbols: true` and `strict: true`'
+		);
 	});
 	test('escape', function() {
 		equal(
