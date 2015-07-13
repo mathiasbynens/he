@@ -35,6 +35,8 @@ Enable the use of named character references (like `&copy;`) in the output. If c
 Encode every symbol in the input string, even safe printable ASCII symbols.
 .It Sy "--encode --allow-unsafe"
 Encode non-ASCII characters only. This leaves unsafe HTML/XML symbols like `&`, `<`, `>`, `"`, and `'` intact.
+.It Sy "--encode --decimal"
+Use decimal digits rather than hexadecimal digits for encoded character references, e.g. output `&#169;` instead of `&#xA9;`.
 .It Sy "--decode"
 Takes a string of HTML and decode any named and numerical character references in it using the algorithm described in the HTML spec.
 .It Sy "--decode --attribute"

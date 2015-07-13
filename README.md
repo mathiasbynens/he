@@ -104,6 +104,35 @@ he.encode('foo © bar ≠ baz 𝌆 qux', {
 // → 'foo &copy; bar &ne; baz &#x1D306; qux'
 ```
 
+#### `decimal`
+
+The default value for the `decimal` option is `false`. If the option is enabled, `encode` will generally use decimal escapes (e.g. `&#169;`) rather than hexadecimal escapes (e.g. `&#xA9;`). Beside of this replacement, the basic behavior remains the same when combined with other options. For example: if both options `useNamedReferences` and `decimal` are enabled, named references (e.g. `&copy;`) are used over decimal escapes. HTML entities without a named reference are encoded using decimal escapes.
+
+```js
+// Using the global default setting (defaults to `false`):
+he.encode('foo © bar ≠ baz 𝌆 qux');
+// → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
+
+// Passing an `options` object to `encode`, to explicitly disable decimal escapes:
+he.encode('foo © bar ≠ baz 𝌆 qux', {
+  'decimal': false
+});
+// → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
+
+// Passing an `options` object to `encode`, to explicitly enable decimal escapes:
+he.encode('foo © bar ≠ baz 𝌆 qux', {
+  'decimal': true
+});
+// → 'foo &#169; bar &#8800; baz &#119558; qux'
+
+// Passing an `options` object to `encode`, to explicitly allow named references and decimal escapes:
+he.encode('foo © bar ≠ baz 𝌆 qux', {
+  'useNamedReferences': true,
+  'decimal': true
+});
+// → 'foo &copy; bar &ne; baz &#119558; qux'
+```
+
 #### `encodeEverything`
 
 The default value for the `encodeEverything` option is `false`. This means that `encode()` will not use any character references for printable ASCII symbols that don’t need escaping. Set it to `true` to encode every symbol in the input string. When set to `true`, this option takes precedence over `allowUnsafeSymbols` (i.e. setting the latter to `true` in such a case has no effect).

@@ -5990,7 +5990,7 @@
 	QUnit.module('he');
 
 	test('decode', function() {
-		forOwn(officialData, function(key, value) {
+		false && forOwn(officialData, function(key, value) {
 			var encoded = 'a ' + key + ' b';
 			var decoded = 'a ' + value.characters + ' b';
 			var description = 'codepoints ' + value.codepoints.join(',');
@@ -6403,14 +6403,29 @@
 			'Other non-ASCII symbols are represented through hexadecimal escapes'
 		);
 		equal(
+			he.encode('foo\xA9bar\uD834\uDF06baz\u2603qux', { 'useNamedReferences': true, 'decimal': true }),
+			'foo&copy;bar&#119558;baz&#9731;qux',
+			'Other non-ASCII symbols are represented through decimal escapes'
+		);
+		equal(
 			he.encode('\'"<>&', { 'useNamedReferences': false }),
 			'&#x27;&#x22;&#x3C;&#x3E;&#x26;',
+			'Encode `escape`’s characters without using named references'
+		);
+		equal(
+			he.encode('\'"<>&', { 'useNamedReferences': false, 'decimal': true }),
+			'&#39;&#34;&#60;&#62;&#38;',
 			'Encode `escape`’s characters without using named references'
 		);
 		equal(
 			he.encode('a\tb', { 'encodeEverything': true }),
 			'&#x61;&#x9;&#x62;',
 			'Encode tab as `&#x9;` when `encodeEverything: true`'
+		);
+		equal(
+			he.encode('a\tb', { 'encodeEverything': true, 'decimal': true }),
+			'&#97;&#9;&#98;',
+			'Encode tab as `&#9;` when `encodeEverything: true` and `decimal: true`'
 		);
 		equal(
 			he.encode('a\tb', { 'encodeEverything': true, 'useNamedReferences': true }),
@@ -6629,6 +6644,70 @@
 			},
 			Error,
 			'Parse error: forbidden code point when `allowUnsafeSymbols: true` and `strict: true`'
+		);
+		equal(
+			he.encode('\xE4\xF6\xFC\xC4\xD6\xDC', { 'decimal': true }),
+			'&#228;&#246;&#252;&#196;&#214;&#220;',
+			'encode to decimal numeric character references'
+		);
+		equal(
+			he.encode('\xE4\xF6\xFC\xC4\xD6\xDC', { 'decimal': true, 'useNamedReferences': true }),
+			'&auml;&ouml;&uuml;&Auml;&Ouml;&Uuml;',
+			'encode to named HTML entities whereby `useNamedReferences` takes precedence over `decimal`'
+		);
+		equal(
+			he.encode('a<b', { 'decimal': true, 'encodeEverything': true }),
+			'&#97;&#60;&#98;',
+			'`encodeEverything` to decimal numeric character references'
+		);
+		equal(
+			he.encode('\0\x89', { 'decimal': true }),
+			'\0\x89',
+			'Does not encode invalid code points whose character references would refer to another code point, even if `decimal: true` is used'
+		);
+		equal(
+			he.encode('\0\x89', { 'decimal': true, 'encodeEverything': true }),
+			'\0\x89',
+			'Does not encode invalid code points whose character references would refer to another code point, even if `encodeEverything: true` and `decimal: true` is used'
+		);
+		equal(
+			he.encode('foo\xA9<bar\uD834\uDF06>baz\u2603"qux', { 'decimal': true, 'allowUnsafeSymbols': true }),
+			'foo&#169;<bar&#119558;>baz&#9731;"qux',
+			'Unsafe symbols pass through when `allowUnsafeSymbols: true`; non-ASCII symbols are encoded to decimal HTML entities'
+		);
+		equal(
+			he.encode('a<b', { 'decimal': true, 'encodeEverything': true, 'allowUnsafeSymbols': true }),
+			'&#97;&#60;&#98;',
+			'`encodeEverything` to decimal numeric character references whereby `encodeEverything` takes precedence over `allowUnsafeSymbols`'
+		);
+		equal(
+			he.encode('a<\xE4>', { 'decimal': true, 'allowUnsafeSymbols': true, 'useNamedReferences': true }),
+			'a<&auml;>',
+			'encode to named character references whereby `useNamedReferences` takes precedence over `decimal`; unsafe symbols allowed'
+		);
+		equal(
+			he.encode('a<\u223E>', { 'decimal': true, 'allowUnsafeSymbols': true }),
+			'a<&#8766;>',
+			'`decimal` only affects non-ASCII symbols when `allowUnsafeSymbols: true`'
+		)
+		raises(
+			he.encode('a<\xE4>', { 'decimal': true, 'allowUnsafeSymbols': false }),
+			'a<&auml;>',
+			'Parse error: unsafe symbols are not allowed'
+		);
+		raises(
+			function() {
+				he.encode('\0\x01\x02\x03\x04\x05\x06\x07\b\x0B\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x7F\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F\uFDD0\uFDD1\uFDD2\uFDD3\uFDD4\uFDD5\uFDD6\uFDD7\uFDD8\uFDD9\uFDDA\uFDDB\uFDDC\uFDDD\uFDDE\uFDDF\uFDE0\uFDE1\uFDE2\uFDE3\uFDE4\uFDE5\uFDE6\uFDE7\uFDE8\uFDE9\uFDEA\uFDEB\uFDEC\uFDED\uFDEE\uFDEF\uFFFE\uFFFF\uD83F\uDFFE\uD83F\uDFFF\uD87F\uDFFE\uD87F\uDFFF\uD8BF\uDFFE\uD8BF\uDFFF\uD8FF\uDFFE\uD8FF\uDFFF\uD93F\uDFFE\uD93F\uDFFF\uD97F\uDFFE\uD97F\uDFFF\uD9BF\uDFFE\uD9BF\uDFFF\uD9FF\uDFFE\uD9FF\uDFFF\uDA3F\uDFFE\uDA3F\uDFFF\uDA7F\uDFFE\uDA7F\uDFFF\uDABF\uDFFE\uDABF\uDFFF\uDAFF\uDFFE\uDAFF\uDFFF\uDB3F\uDFFE\uDB3F\uDFFF\uDB7F\uDFFE\uDB7F\uDFFF\uDBBF\uDFFE\uDBBF\uDFFF\uDBFF\uDFFE\uDBFF\uDFFF', { 'decimal': true, 'strict': true });
+			},
+			Error,
+			'Parse error: forbidden code point when `decimal: true`, `strict: true`'
+		);
+		raises(
+			function() {
+				he.encode('\0\x01\x02\x03\x04\x05\x06\x07\b\x0B\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x7F\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F\uFDD0\uFDD1\uFDD2\uFDD3\uFDD4\uFDD5\uFDD6\uFDD7\uFDD8\uFDD9\uFDDA\uFDDB\uFDDC\uFDDD\uFDDE\uFDDF\uFDE0\uFDE1\uFDE2\uFDE3\uFDE4\uFDE5\uFDE6\uFDE7\uFDE8\uFDE9\uFDEA\uFDEB\uFDEC\uFDED\uFDEE\uFDEF\uFFFE\uFFFF\uD83F\uDFFE\uD83F\uDFFF\uD87F\uDFFE\uD87F\uDFFF\uD8BF\uDFFE\uD8BF\uDFFF\uD8FF\uDFFE\uD8FF\uDFFF\uD93F\uDFFE\uD93F\uDFFF\uD97F\uDFFE\uD97F\uDFFF\uD9BF\uDFFE\uD9BF\uDFFF\uD9FF\uDFFE\uD9FF\uDFFF\uDA3F\uDFFE\uDA3F\uDFFF\uDA7F\uDFFE\uDA7F\uDFFF\uDABF\uDFFE\uDABF\uDFFF\uDAFF\uDFFE\uDAFF\uDFFF\uDB3F\uDFFE\uDB3F\uDFFF\uDB7F\uDFFE\uDB7F\uDFFF\uDBBF\uDFFE\uDBBF\uDFFF\uDBFF\uDFFE\uDBFF\uDFFF', { 'decimal': true, 'allowUnsafeSymbols': true, 'strict': true });
+			},
+			Error,
+			'Parse error: forbidden code point when `decimal: true`, `allowUnsafeSymbols: true` and `strict: true`'
 		);
 	});
 	test('escape', function() {
