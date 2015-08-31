@@ -39,7 +39,7 @@
 		"test": "node tests/tests.js"
 	},
 	"devDependencies": {
-		"coveralls": "^2.11.2",
+		"codecov.io": "^0.1.6",
 		"grunt": "^0.4.5",
 		"grunt-shell": "^1.1.1",
 		"grunt-template": "^0.2.3",

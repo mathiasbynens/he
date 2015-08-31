@@ -10,8 +10,8 @@ module.exports = function(grunt) {
 			'cover-html': {
 				'command': 'istanbul cover --report "html" --verbose --dir "coverage" "tests/tests.js"'
 			},
-			'cover-coveralls': {
-				'command': 'istanbul cover --verbose --dir "coverage" "tests/tests.js" && cat coverage/lcov.info | coveralls; rm -rf coverage/lcov*'
+			'cover-codecov': {
+				'command': 'istanbul cover --verbose --dir "coverage" "tests/tests.js" && codecov < coverage/lcov.info; rm -rf coverage/lcov*'
 			},
 			'fetch-entities': {
 				'command': 'curl https://html.spec.whatwg.org/entities.json | sed "s/  /\t/g" > data/entities.json'

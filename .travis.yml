@@ -19,4 +19,4 @@ before_script:
 script:
   - "grunt ci"
 after_script:
-  - "grunt shell:cover-coveralls"
+  - "grunt shell:cover-codecov"
