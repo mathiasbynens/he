@@ -46,7 +46,8 @@
 		// to break out of (un)quoted attribute values or HTML comments.
 		// See http://html5sec.org/#102, http://html5sec.org/#108, and
 		// http://html5sec.org/#133.
-		'`': '&#x60;'
+		'`': '&#x60;',
+		"'": '&#39;'
 	};
 
 	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
