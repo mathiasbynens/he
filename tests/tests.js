@@ -6360,6 +6360,16 @@
 			Error,
 			'Parse error: decoding `&#xZ` in strict mode'
 		);
+		equal(
+			he.decode('&#00'),
+			'\uFFFD',
+			'Decoding `&#00` numeric character reference (see issue #43)'
+		),
+		equal(
+			he.decode('&#0128;'),
+			'\u20AC',
+			'Decoding `0`-prefixed numeric character referencs (see issue #43)'
+		)
 
 	});
 	test('encode', function() {
