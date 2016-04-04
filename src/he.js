@@ -229,16 +229,18 @@
 		return html.replace(regexDecode, function($0, $1, $2, $3, $4, $5, $6, $7) {
 			var codePoint;
 			var semicolon;
+			var decDigits;
 			var hexDigits;
 			var reference;
 			var next;
 			if ($1) {
 				// Decode decimal escapes, e.g. `&#119558;`.
-				codePoint = $1;
+				decDigits = $1;
 				semicolon = $2;
 				if (strict && !semicolon) {
 					parseError('character reference was not terminated by a semicolon');
 				}
+				codePoint = parseInt(decDigits, 10);
 				return codePointToSymbol(codePoint, strict);
 			}
 			if ($3) {
