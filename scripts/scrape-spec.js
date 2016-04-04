@@ -1,3 +1,5 @@
+#!/usr/bin/env phantomjs
+
 var page = require('webpage').create();
 var fs = require('fs');
 var jsesc = require('jsesc');
@@ -42,7 +44,7 @@ open('https://html.spec.whatwg.org/', function() {
 		};
 
 		// Code points that cause parse errors when used in character references
-		// http://whatwg.org/html/tokenization.html#table-charref-overrides
+		// https://html.spec.whatwg.org/multipage/syntax.html#table-charref-overrides
 		var table = document.querySelector('#table-charref-overrides');
 		var siblings = table.parentNode.children;
 		var max = siblings.length - 1;
@@ -63,7 +65,7 @@ open('https://html.spec.whatwg.org/', function() {
 		});
 
 		// Character reference overrides
-		// http://whatwg.org/html/tokenization.html#table-charref-overrides
+		// https://html.spec.whatwg.org/multipage/syntax.html#table-charref-overrides
 		var cells = table.querySelectorAll('td');
 		var keys = [].filter.call(cells, function(cell, index) {
 			return index % 3 == 0;
@@ -93,7 +95,7 @@ open('https://html.spec.whatwg.org/', function() {
 		});
 
 		// Code points for symbols that cause parse errors when in the HTML source
-		// http://whatwg.org/html/parsing.html#preprocessing-the-input-stream
+		// https://html.spec.whatwg.org/multipage/syntax.html#preprocessing-the-input-stream
 		var header = document.querySelector('#preprocessing-the-input-stream');
 		var element = header;
 		var text;
@@ -117,9 +119,10 @@ open('https://html.spec.whatwg.org/', function() {
 		rawCodePoints = rawCodePoints.sort(function(a, b) {
 			return a - b;
 		});
-		// U+0000 is a parse error in the Data state (which is the state where `he`’s
-		// input and output is supposed to end up in), so add it to the set of invalid
-		// raw code points. http://whatwg.org/html/tokenization.html#data-state
+		// U+0000 is a parse error in the Data state (which is the state where
+		// `he`’s input and output is supposed to end up in), so add it to the set
+		// of invalid raw code points.
+		// https://html.spec.whatwg.org/multipage/syntax.html#data-state
 		rawCodePoints.unshift(0x0000);
 
 		// Pass everything back to PhantomJS.
@@ -140,7 +143,7 @@ open('https://html.spec.whatwg.org/', function() {
 	// Note: `invalid-character-reference-code-points.json` is identical to
 	// `invalid-raw-code-points.json` except U+000D (CR) is not included in
 	// the latter, because lone CR are converted to LF before tokenization.
-	// http://whatwg.org/html/parsing.html#preprocessing-the-input-stream
+	// https://html.spec.whatwg.org/multipage/syntax.html#preprocessing-the-input-stream
 
 	phantom.exit();
 });

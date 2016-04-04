@@ -1,7 +1,9 @@
-var jsesc = require('jsesc');
+'use strict';
 
-var formatJSON = function(fileName) {
-	var object = require('../data/' + fileName + '.json');
+const jsesc = require('jsesc');
+
+const formatJSON = function(fileName) {
+	const object = require('../data/' + fileName + '.json');
 	return jsesc(object, {
 		'compact': true,
 		'quotes': 'single'

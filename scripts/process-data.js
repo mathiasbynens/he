@@ -1,32 +1,35 @@
-var fs = require('fs');
-var jsesc = require('jsesc');
-var _ = require('lodash');
+'use strict';
+
+const fs = require('fs');
+const jsesc = require('jsesc');
+const _ = require('lodash');
+const sortObject = require('sort-object');
 
 // https://html.spec.whatwg.org/entities.json
-var data = require('../data/entities.json');
+const data = require('../data/entities.json');
 
-var encodeMap = {};
-var encodeMultipleSymbols = [];
-var encodeSingleCodePoints = [];
-var decodeMap = {};
-var decodeMapLegacy = {};
+const encodeMap = {};
+let encodeMultipleSymbols = [];
+let encodeSingleCodePoints = [];
+const decodeMap = {};
+const decodeMapLegacy = {};
 
 _.forOwn(data, function(value, key) {
-	var referenceWithLeadingAmpersand = key;
-	var referenceWithoutLeadingAmpersand = referenceWithLeadingAmpersand.replace(/^&/, '');
-	var referenceOnly = referenceWithoutLeadingAmpersand.replace(/;$/, '');
-	var string = value.characters;
-	var codePoints = value.codepoints;
-	var tmp;
+	const referenceWithLeadingAmpersand = key;
+	const referenceWithoutLeadingAmpersand = referenceWithLeadingAmpersand.replace(/^&/, '');
+	const referenceOnly = referenceWithoutLeadingAmpersand.replace(/;$/, '');
+	const string = value.characters;
+	const codePoints = value.codepoints;
 	if (/;$/.test(referenceWithoutLeadingAmpersand)) {
-		// only if the entity has a trailing semicolon
-		tmp = encodeMap[string];
-		// Prefer short named character references with as few uppercase letters as possible
-		if ( // only add an entry if…
+		// Only enter this branch if the entity has a trailing semicolon.
+		const tmp = encodeMap[string];
+		// Prefer short named character references with as few uppercase letters as
+		// possible.
+		if ( // Only add an entry if…
 			!tmp || ( // …there is no entry for this string yet, or…
 				tmp.length > referenceOnly.length || // …this reference is shorter, or…
 				(
-					// …this reference contains fewer uppercase letters
+					// …this reference contains fewer uppercase letters.
 					tmp.length == referenceOnly.length &&
 					(referenceOnly.match(/[A-Z]/g) || []).length <
 					(tmp.match(/[A-Z]/g) || []).length
@@ -35,7 +38,7 @@ _.forOwn(data, function(value, key) {
 		) {
 			encodeMap[string] = referenceOnly;
 		} else {
-			// do nothing
+			// Do nothing.
 		}
 		if (codePoints.length == 1) {
 			encodeSingleCodePoints.push(codePoints[0]);
@@ -51,37 +54,45 @@ _.forOwn(data, function(value, key) {
 });
 
 encodeMultipleSymbols = _.uniq(
-	encodeMultipleSymbols.sort(), // sort strings by code point value
+	encodeMultipleSymbols.sort(), // Sort strings by code point value.
 	true
 );
 
 encodeSingleCodePoints = _.uniq(
-	_.sortBy(encodeSingleCodePoints), // numeric sort
+	_.sortBy(encodeSingleCodePoints), // Sort numerically.
 	true
 );
 
-var legacyReferences = _.keys(decodeMapLegacy).sort(function(a, b) {
+const legacyReferences = _.keys(decodeMapLegacy).sort(function(a, b) {
+	// Optimize the regular expression that will be generated based on this data
+	// by sorting the references by length in descending order.
 	if (a.length > b.length) {
 		return -1;
 	}
 	if (a.length < b.length) {
 		return 1;
 	}
-	// a.length == b.length, so sort alphabetically
-	return a - b;
+	// If the length of both strings is equal, sort alphabetically.
+	if (a < b) {
+		return -1;
+	}
+	if (a > b) {
+		return 1;
+	}
+	return 0;
 });
 
-var writeJSON = function(fileName, object) {
-	var json = jsesc(object, {
+const writeJSON = function(fileName, object) {
+	const json = jsesc(object, {
 		'compact': false,
 		'json': true
 	});
 	fs.writeFileSync(fileName, json + '\n');
 };
 
-writeJSON('data/decode-map.json', decodeMap);
-writeJSON('data/decode-map-legacy.json', decodeMapLegacy);
+writeJSON('data/decode-map.json', sortObject(decodeMap));
+writeJSON('data/decode-map-legacy.json', sortObject(decodeMapLegacy));
 writeJSON('data/decode-legacy-named-references.json', legacyReferences);
-writeJSON('data/encode-map.json', encodeMap);
+writeJSON('data/encode-map.json', sortObject(encodeMap));
 writeJSON('data/encode-paired-symbols.json', encodeMultipleSymbols);
 writeJSON('data/encode-lone-code-points.json', encodeSingleCodePoints);
