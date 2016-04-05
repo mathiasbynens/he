@@ -311,7 +311,19 @@ See `he --help` for the full list of options.
 
 ## Support
 
-he has been tested in at least Chrome 27-29, Firefox 3-22, Safari 4-6, Opera 10-12, IE 6-10, Node.js v0.10.0, io.js v1.0.0, Narwhal 0.3.2, RingoJS 0.8-0.11, PhantomJS 1.9.0, and Rhino 1.7RC4.
+_he_ has been tested in at least:
+
+* Chrome 27-50
+* Firefox 3-45
+* Safari 4-9
+* Opera 10-12, 15–37
+* IE 6–11
+* Edge
+* Narwhal 0.3.2
+* Node.js v0.10, v0.12, v4, v5
+* PhantomJS 1.9.0
+* Rhino 1.7RC4
+* RingoJS 0.8-0.11
 
 ## Unit tests & code coverage
 
