@@ -123,8 +123,14 @@
 		return output;
 	};
 
-	var hexEscape = function(symbol) {
-		return '&#x' + symbol.charCodeAt(0).toString(16).toUpperCase() + ';';
+	// takes integer representing the character code of a symbol
+	var hexEscape = function(charCode) {
+		return '&#x' + charCode.toString(16).toUpperCase() + ';';
+	};
+
+	// takes integer representing the character code of a symbol
+	var decEscape = function(charCode) {
+		return '&#' + charCode + ';';
 	};
 
 	var parseError = function(message) {
@@ -142,6 +148,9 @@
 		var encodeEverything = options.encodeEverything;
 		var useNamedReferences = options.useNamedReferences;
 		var allowUnsafeSymbols = options.allowUnsafeSymbols;
+		var escapeCharCode = options.decimal ? decEscape : hexEscape;
+		var escapeSymbol = function(symbol) {return escapeCharCode(symbol.charCodeAt(0));}
+
 		if (encodeEverything) {
 			// Encode ASCII symbols.
 			string = string.replace(regexAsciiWhitelist, function(symbol) {
@@ -149,7 +158,7 @@
 				if (useNamedReferences && has(encodeMap, symbol)) {
 					return '&' + encodeMap[symbol] + ';';
 				}
-				return hexEscape(symbol);
+				return escapeSymbol(symbol);
 			});
 			// Shorten a few escapes that represent two symbols, of which at least one
 			// is within the ASCII range.
@@ -189,7 +198,7 @@
 		} else if (!allowUnsafeSymbols) {
 			// Encode `<>"'&` using hexadecimal escapes, now that they’re not handled
 			// using named character references.
-			string = string.replace(regexEscape, hexEscape);
+			string = string.replace(regexEscape, escapeSymbol);
 		}
 		return string
 			// Encode astral symbols.
@@ -198,18 +207,19 @@
 				var high = $0.charCodeAt(0);
 				var low = $0.charCodeAt(1);
 				var codePoint = (high - 0xD800) * 0x400 + low - 0xDC00 + 0x10000;
-				return '&#x' + codePoint.toString(16).toUpperCase() + ';';
+				return escapeCharCode(codePoint);
 			})
 			// Encode any remaining BMP symbols that are not printable ASCII symbols
 			// using a hexadecimal escape.
-			.replace(regexBmpWhitelist, hexEscape);
+			.replace(regexBmpWhitelist, escapeSymbol);
 	};
 	// Expose default options (so they can be overridden globally).
 	encode.options = {
 		'allowUnsafeSymbols': false,
 		'encodeEverything': false,
 		'strict': false,
-		'useNamedReferences': false
+		'useNamedReferences': false,
+		'decimal' : false
 	};
 
 	var decode = function(html, options) {
