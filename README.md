@@ -71,12 +71,14 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 // → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
 ```
 
-As long as the input string contains [allowed code points](https://html.spec.whatwg.org/multipage/parsing.html#preprocessing-the-input-stream) only, the return value of this function is always valid HTML. Any [(invalid) code points that cannot be represented using a character reference](https://html.spec.whatwg.org/multipage/syntax.html#table-charref-overrides) in the input are not encoded.
+As long as the input string contains [allowed code points](https://html.spec.whatwg.org/multipage/parsing.html#preprocessing-the-input-stream) only, the return value of this function is always valid HTML. Any [(invalid) code points that cannot be represented using a character reference](https://html.spec.whatwg.org/multipage/syntax.html#table-charref-overrides) in the input are not encoded:
 
 ```js
 he.encode('foo \0 bar');
 // → 'foo \0 bar'
 ```
+
+However, enabling [the `strict` option](https://github.com/mathiasbynens/he#strict) causes invalid code points to throw an exception. With `strict` enabled, `he.encode` either throws (if the input contains invalid code points) or returns a string of valid HTML.
 
 The `options` object is optional. It recognizes the following properties:
 
