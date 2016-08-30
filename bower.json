@@ -1,6 +1,7 @@
 {
 	"name": "he",
 	"version": "1.1.0",
+	"license": "MIT",
 	"main": "he.js",
 	"ignore": [
 		"bin",
