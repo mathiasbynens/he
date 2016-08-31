@@ -78,6 +78,8 @@ he.encode('foo \0 bar');
 // → 'foo \0 bar'
 ```
 
+Adding the `strict` option (see below) will, however, cause invalid code points to throw an error, so the return value of this function will always be valid HTML or an error, independent on the input.
+
 The `options` object is optional. It recognizes the following properties:
 
 #### `useNamedReferences`
