@@ -6364,13 +6364,32 @@
 			he.decode('&#00'),
 			'\uFFFD',
 			'Decoding `&#00` numeric character reference (see issue #43)'
-		),
+		);
 		equal(
 			he.decode('&#0128;'),
 			'\u20AC',
 			'Decoding `0`-prefixed numeric character referencs (see issue #43)'
-		)
-
+		);
+		equal(
+			he.decode(''),
+			'',
+			'Decode pass-thru empty string'
+		);
+		equal(
+			he.decode(null),
+			null,
+			'Decode pass-thru null'
+		);
+		equal(
+			he.decode(undefined),
+			undefined,
+			'Decode pass-thru undefined'
+		);
+		equal(
+			he.decode(false),
+			false,
+			'Decode pass-thru false'
+		);
 	});
 	test('encode', function() {
 		equal(
@@ -6709,6 +6728,26 @@
 			Error,
 			'Parse error: forbidden code point when `decimal: true`, `allowUnsafeSymbols: true` and `strict: true`'
 		);
+		equal(
+			he.encode(''),
+			'',
+			'Encode pass-thru empty string'
+		);
+		equal(
+			he.encode(null),
+			null,
+			'Encode pass-thru null'
+		);
+		equal(
+			he.encode(undefined),
+			undefined,
+			'Encode pass-thru undefined'
+		);
+		equal(
+			he.encode(false),
+			false,
+			'Encode pass-thru false'
+		);
 	});
 	test('escape', function() {
 		equal(
@@ -6725,6 +6764,46 @@
 			he.decode,
 			he.unescape,
 			'`decode` and `unescape` should be the same'
+		);
+		equal(
+			he.escape(''),
+			'',
+			'Escape pass-thru empty string'
+		);
+		equal(
+			he.escape(null),
+			null,
+			'Escape pass-thru null'
+		);
+		equal(
+			he.escape(undefined),
+			undefined,
+			'Escape pass-thru undefined'
+		);
+		equal(
+			he.unescape(false),
+			false,
+			'Unescape pass-thru false'
+		);
+		equal(
+			he.unescape(''),
+			'',
+			'Unescape pass-thru empty string'
+		);
+		equal(
+			he.unescape(null),
+			null,
+			'Unescape pass-thru null'
+		);
+		equal(
+			he.unescape(undefined),
+			undefined,
+			'Unescape pass-thru undefined'
+		);
+		equal(
+			he.unescape(false),
+			false,
+			'Unescape pass-thru false'
 		);
 	});
 
