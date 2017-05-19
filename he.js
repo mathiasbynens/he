@@ -138,6 +138,7 @@
 	/*--------------------------------------------------------------------------*/
 
 	var encode = function(string, options) {
+		if (!string) return string;
 		options = merge(options, encode.options);
 		var strict = options.strict;
 		if (strict && regexInvalidRawCodePoint.test(string)) {
@@ -224,6 +225,7 @@
 	};
 
 	var decode = function(html, options) {
+		if (!html) return html;
 		options = merge(options, decode.options);
 		var strict = options.strict;
 		if (strict && regexInvalidEntity.test(html)) {
@@ -301,7 +303,7 @@
 	};
 
 	var escape = function(string) {
-		return string.replace(regexEscape, function($0) {
+		return string && string.replace(regexEscape, function($0) {
 			// Note: there is no need to check `has(escapeMap, $0)` here.
 			return escapeMap[$0];
 		});
