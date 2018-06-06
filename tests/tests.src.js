@@ -6364,12 +6364,12 @@
 			he.decode('&#00'),
 			'\uFFFD',
 			'Decoding `&#00` numeric character reference (see issue #43)'
-		),
+		);
 		equal(
 			he.decode('&#0128;'),
 			'\u20AC',
 			'Decoding `0`-prefixed numeric character referencs (see issue #43)'
-		)
+		);
 
 	});
 	test('encode', function() {
@@ -6637,7 +6637,7 @@
 			he.encode('a<\u223E>', { 'allowUnsafeSymbols': true, 'useNamedReferences': true }),
 			'a<&ac;>',
 			'`useNamedReferences` only affects non-ASCII symbols when `allowUnsafeSymbols: true`'
-		)
+		);
 		raises(
 			function() {
 				he.encode(<%= stringInvalidCodePoints %>, { 'allowUnsafeSymbols': true, 'strict': true });
@@ -6689,7 +6689,7 @@
 			he.encode('a<\u223E>', { 'decimal': true, 'allowUnsafeSymbols': true }),
 			'a<&#8766;>',
 			'`decimal` only affects non-ASCII symbols when `allowUnsafeSymbols: true`'
-		)
+		);
 		raises(
 			he.encode('a<\xE4>', { 'decimal': true, 'allowUnsafeSymbols': false }),
 			'a<&auml;>',
