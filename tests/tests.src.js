@@ -6349,7 +6349,7 @@
 				'strict': false
 			}),
 			'&#Z',
-			'Decoding `&#xZ` in error-tolerant mode'
+			'Decoding `&#Z` in error-tolerant mode'
 		);
 		raises(
 			function() {
@@ -6358,7 +6358,7 @@
 				});
 			},
 			Error,
-			'Parse error: decoding `&#xZ` in strict mode'
+			'Parse error: decoding `&#Z` in strict mode'
 		);
 		equal(
 			he.decode('&#00'),
