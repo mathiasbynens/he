@@ -5979,6 +5979,10 @@
 		{
 			'decoded': 'a\u200Cb',
 			'encoded': 'a&zwnj;b'
+		},
+		{
+			'decoded': '&xxx; &xxx &thorn; &thorn &curren;t &current',
+			'encoded': '&amp;xxx; &amp;xxx &amp;thorn; &amp;thorn &amp;curren;t &amp;current'
 		}
 	];
 
@@ -6040,6 +6044,11 @@
 			he.decode('&notin; &noti &notin &copy123'),
 			'\u2209 \xACi \xACin \xA9123',
 			'Legacy named references (without a trailing semicolon)'
+		);
+		equal(
+			he.decode('&amp;xxx; &amp;xxx &ampthorn; &ampthorn &ampcurren;t &ampcurrent'),
+			'&xxx; &xxx &thorn; &thorn &curren;t &current',
+			'Legacy named references'
 		);
 		equal(
 			he.decode('a&#x1D306;b&#X0000000000001d306;c'),
@@ -6213,15 +6222,14 @@
 			'Parse error: `I\'m ¬it; I tell you`'
 		);
 		he.decode.options.strict = false;
-		raises(
-			function() {
-				he.decode('I\'m &notit; I tell you', {
-					'strict': true,
-					'isAttributeValue': true
-				});
-			},
-			Error,
-			'Parse error: `I\'m &notit; I tell you` as attribute value'
+		// https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state
+		equal(
+			he.decode('I\'m &notit; I tell you', {
+				'strict': true,
+				'isAttributeValue': true
+			}),
+			'I\'m &notit; I tell you',
+			'No parse error: `I\'m &notit; I tell you` as attribute value'
 		);
 		equal(
 			he.decode('I\'m &notit; I tell you', {
