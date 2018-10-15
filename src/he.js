@@ -352,4 +352,4 @@
 		root.he = he;
 	}
 
-}((new Function('return this)());
+}((new Function('return this))());
