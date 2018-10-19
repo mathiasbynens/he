@@ -1,5 +1,5 @@
 /*! https://mths.be/he v<%= version %> by @mathias | MIT license */
-;(function(root) {
+(function(root) {
 
 	// Detect free variables `exports`.
 	var freeExports = typeof exports == 'object' && exports;
@@ -351,5 +351,4 @@
 	} else { // in Rhino or a web browser
 		root.he = he;
 	}
-
-}(this));
+})(new Function('return this')());
