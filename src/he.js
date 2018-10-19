@@ -351,5 +351,4 @@
 	} else { // in Rhino or a web browser
 		root.he = he;
 	}
-
-}(new Function('return this')());
+})(new Function('return this')());
