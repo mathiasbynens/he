@@ -297,11 +297,11 @@
 				return codePointToSymbol(codePoint, strict);
 			}
 
-			// If we’re still here, `if ($7)` is implied; it’s an ambiguous
+			// If we’re still here, `if ($8)` is implied; it’s an ambiguous
 			// ampersand for sure. https://mths.be/notes/ambiguous-ampersands
 			if (strict) {
 				parseError(
-					'named character reference was not terminated by a semicolon'
+					'named character reference was not recognized'
 				);
 			}
 			return $0;
