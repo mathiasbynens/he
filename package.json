@@ -1,6 +1,6 @@
 {
 	"name": "he",
-	"version": "1.2.0",
+	"version": "2.0.0",
 	"description": "A robust HTML entities encoder/decoder with full Unicode support.",
 	"keywords": [
 		"decode",
