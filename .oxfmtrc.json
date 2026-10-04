@@ -1,0 +1,16 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"arrowParens": "always",
+	"objectWrap": "preserve",
+	"semi": true,
+	"singleQuote": true,
+	"trailingComma": "all",
+	"printWidth": 80,
+	"tabWidth": 2,
+	"useTabs": true,
+	"sortPackageJson": true,
+	"ignorePatterns": [
+		"data/decode-code-points-overrides.json",
+		"data/invalid-character-reference-code-points.json"
+	]
+}

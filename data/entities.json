@@ -59,7 +59,10 @@
 	"&CircleMinus;": { "codepoints": [8854], "characters": "\u2296" },
 	"&CirclePlus;": { "codepoints": [8853], "characters": "\u2295" },
 	"&CircleTimes;": { "codepoints": [8855], "characters": "\u2297" },
-	"&ClockwiseContourIntegral;": { "codepoints": [8754], "characters": "\u2232" },
+	"&ClockwiseContourIntegral;": {
+		"codepoints": [8754],
+		"characters": "\u2232"
+	},
 	"&CloseCurlyDoubleQuote;": { "codepoints": [8221], "characters": "\u201D" },
 	"&CloseCurlyQuote;": { "codepoints": [8217], "characters": "\u2019" },
 	"&Colon;": { "codepoints": [8759], "characters": "\u2237" },
@@ -69,7 +72,10 @@
 	"&ContourIntegral;": { "codepoints": [8750], "characters": "\u222E" },
 	"&Copf;": { "codepoints": [8450], "characters": "\u2102" },
 	"&Coproduct;": { "codepoints": [8720], "characters": "\u2210" },
-	"&CounterClockwiseContourIntegral;": { "codepoints": [8755], "characters": "\u2233" },
+	"&CounterClockwiseContourIntegral;": {
+		"codepoints": [8755],
+		"characters": "\u2233"
+	},
 	"&Cross;": { "codepoints": [10799], "characters": "\u2A2F" },
 	"&Cscr;": { "codepoints": [119966], "characters": "\uD835\uDC9E" },
 	"&Cup;": { "codepoints": [8915], "characters": "\u22D3" },
@@ -105,7 +111,10 @@
 	"&DoubleLeftRightArrow;": { "codepoints": [8660], "characters": "\u21D4" },
 	"&DoubleLeftTee;": { "codepoints": [10980], "characters": "\u2AE4" },
 	"&DoubleLongLeftArrow;": { "codepoints": [10232], "characters": "\u27F8" },
-	"&DoubleLongLeftRightArrow;": { "codepoints": [10234], "characters": "\u27FA" },
+	"&DoubleLongLeftRightArrow;": {
+		"codepoints": [10234],
+		"characters": "\u27FA"
+	},
 	"&DoubleLongRightArrow;": { "codepoints": [10233], "characters": "\u27F9" },
 	"&DoubleRightArrow;": { "codepoints": [8658], "characters": "\u21D2" },
 	"&DoubleRightTee;": { "codepoints": [8872], "characters": "\u22A8" },
@@ -335,45 +344,90 @@
 	"&NotDoubleVerticalBar;": { "codepoints": [8742], "characters": "\u2226" },
 	"&NotElement;": { "codepoints": [8713], "characters": "\u2209" },
 	"&NotEqual;": { "codepoints": [8800], "characters": "\u2260" },
-	"&NotEqualTilde;": { "codepoints": [8770, 824], "characters": "\u2242\u0338" },
+	"&NotEqualTilde;": {
+		"codepoints": [8770, 824],
+		"characters": "\u2242\u0338"
+	},
 	"&NotExists;": { "codepoints": [8708], "characters": "\u2204" },
 	"&NotGreater;": { "codepoints": [8815], "characters": "\u226F" },
 	"&NotGreaterEqual;": { "codepoints": [8817], "characters": "\u2271" },
-	"&NotGreaterFullEqual;": { "codepoints": [8807, 824], "characters": "\u2267\u0338" },
-	"&NotGreaterGreater;": { "codepoints": [8811, 824], "characters": "\u226B\u0338" },
+	"&NotGreaterFullEqual;": {
+		"codepoints": [8807, 824],
+		"characters": "\u2267\u0338"
+	},
+	"&NotGreaterGreater;": {
+		"codepoints": [8811, 824],
+		"characters": "\u226B\u0338"
+	},
 	"&NotGreaterLess;": { "codepoints": [8825], "characters": "\u2279" },
-	"&NotGreaterSlantEqual;": { "codepoints": [10878, 824], "characters": "\u2A7E\u0338" },
+	"&NotGreaterSlantEqual;": {
+		"codepoints": [10878, 824],
+		"characters": "\u2A7E\u0338"
+	},
 	"&NotGreaterTilde;": { "codepoints": [8821], "characters": "\u2275" },
-	"&NotHumpDownHump;": { "codepoints": [8782, 824], "characters": "\u224E\u0338" },
+	"&NotHumpDownHump;": {
+		"codepoints": [8782, 824],
+		"characters": "\u224E\u0338"
+	},
 	"&NotHumpEqual;": { "codepoints": [8783, 824], "characters": "\u224F\u0338" },
 	"&NotLeftTriangle;": { "codepoints": [8938], "characters": "\u22EA" },
-	"&NotLeftTriangleBar;": { "codepoints": [10703, 824], "characters": "\u29CF\u0338" },
+	"&NotLeftTriangleBar;": {
+		"codepoints": [10703, 824],
+		"characters": "\u29CF\u0338"
+	},
 	"&NotLeftTriangleEqual;": { "codepoints": [8940], "characters": "\u22EC" },
 	"&NotLess;": { "codepoints": [8814], "characters": "\u226E" },
 	"&NotLessEqual;": { "codepoints": [8816], "characters": "\u2270" },
 	"&NotLessGreater;": { "codepoints": [8824], "characters": "\u2278" },
 	"&NotLessLess;": { "codepoints": [8810, 824], "characters": "\u226A\u0338" },
-	"&NotLessSlantEqual;": { "codepoints": [10877, 824], "characters": "\u2A7D\u0338" },
+	"&NotLessSlantEqual;": {
+		"codepoints": [10877, 824],
+		"characters": "\u2A7D\u0338"
+	},
 	"&NotLessTilde;": { "codepoints": [8820], "characters": "\u2274" },
-	"&NotNestedGreaterGreater;": { "codepoints": [10914, 824], "characters": "\u2AA2\u0338" },
-	"&NotNestedLessLess;": { "codepoints": [10913, 824], "characters": "\u2AA1\u0338" },
+	"&NotNestedGreaterGreater;": {
+		"codepoints": [10914, 824],
+		"characters": "\u2AA2\u0338"
+	},
+	"&NotNestedLessLess;": {
+		"codepoints": [10913, 824],
+		"characters": "\u2AA1\u0338"
+	},
 	"&NotPrecedes;": { "codepoints": [8832], "characters": "\u2280" },
-	"&NotPrecedesEqual;": { "codepoints": [10927, 824], "characters": "\u2AAF\u0338" },
+	"&NotPrecedesEqual;": {
+		"codepoints": [10927, 824],
+		"characters": "\u2AAF\u0338"
+	},
 	"&NotPrecedesSlantEqual;": { "codepoints": [8928], "characters": "\u22E0" },
 	"&NotReverseElement;": { "codepoints": [8716], "characters": "\u220C" },
 	"&NotRightTriangle;": { "codepoints": [8939], "characters": "\u22EB" },
-	"&NotRightTriangleBar;": { "codepoints": [10704, 824], "characters": "\u29D0\u0338" },
+	"&NotRightTriangleBar;": {
+		"codepoints": [10704, 824],
+		"characters": "\u29D0\u0338"
+	},
 	"&NotRightTriangleEqual;": { "codepoints": [8941], "characters": "\u22ED" },
-	"&NotSquareSubset;": { "codepoints": [8847, 824], "characters": "\u228F\u0338" },
+	"&NotSquareSubset;": {
+		"codepoints": [8847, 824],
+		"characters": "\u228F\u0338"
+	},
 	"&NotSquareSubsetEqual;": { "codepoints": [8930], "characters": "\u22E2" },
-	"&NotSquareSuperset;": { "codepoints": [8848, 824], "characters": "\u2290\u0338" },
+	"&NotSquareSuperset;": {
+		"codepoints": [8848, 824],
+		"characters": "\u2290\u0338"
+	},
 	"&NotSquareSupersetEqual;": { "codepoints": [8931], "characters": "\u22E3" },
 	"&NotSubset;": { "codepoints": [8834, 8402], "characters": "\u2282\u20D2" },
 	"&NotSubsetEqual;": { "codepoints": [8840], "characters": "\u2288" },
 	"&NotSucceeds;": { "codepoints": [8833], "characters": "\u2281" },
-	"&NotSucceedsEqual;": { "codepoints": [10928, 824], "characters": "\u2AB0\u0338" },
+	"&NotSucceedsEqual;": {
+		"codepoints": [10928, 824],
+		"characters": "\u2AB0\u0338"
+	},
 	"&NotSucceedsSlantEqual;": { "codepoints": [8929], "characters": "\u22E1" },
-	"&NotSucceedsTilde;": { "codepoints": [8831, 824], "characters": "\u227F\u0338" },
+	"&NotSucceedsTilde;": {
+		"codepoints": [8831, 824],
+		"characters": "\u227F\u0338"
+	},
 	"&NotSuperset;": { "codepoints": [8835, 8402], "characters": "\u2283\u20D2" },
 	"&NotSupersetEqual;": { "codepoints": [8841], "characters": "\u2289" },
 	"&NotTilde;": { "codepoints": [8769], "characters": "\u2241" },
@@ -2140,10 +2194,22 @@
 	"&varr;": { "codepoints": [8597], "characters": "\u2195" },
 	"&varrho;": { "codepoints": [1009], "characters": "\u03F1" },
 	"&varsigma;": { "codepoints": [962], "characters": "\u03C2" },
-	"&varsubsetneq;": { "codepoints": [8842, 65024], "characters": "\u228A\uFE00" },
-	"&varsubsetneqq;": { "codepoints": [10955, 65024], "characters": "\u2ACB\uFE00" },
-	"&varsupsetneq;": { "codepoints": [8843, 65024], "characters": "\u228B\uFE00" },
-	"&varsupsetneqq;": { "codepoints": [10956, 65024], "characters": "\u2ACC\uFE00" },
+	"&varsubsetneq;": {
+		"codepoints": [8842, 65024],
+		"characters": "\u228A\uFE00"
+	},
+	"&varsubsetneqq;": {
+		"codepoints": [10955, 65024],
+		"characters": "\u2ACB\uFE00"
+	},
+	"&varsupsetneq;": {
+		"codepoints": [8843, 65024],
+		"characters": "\u228B\uFE00"
+	},
+	"&varsupsetneqq;": {
+		"codepoints": [10956, 65024],
+		"characters": "\u2ACC\uFE00"
+	},
 	"&vartheta;": { "codepoints": [977], "characters": "\u03D1" },
 	"&vartriangleleft;": { "codepoints": [8882], "characters": "\u22B2" },
 	"&vartriangleright;": { "codepoints": [8883], "characters": "\u22B3" },

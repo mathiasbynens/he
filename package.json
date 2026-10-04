@@ -1,58 +1,58 @@
 {
-  "name": "he",
-  "version": "1.2.0",
-  "description": "A robust HTML entities encoder/decoder with full Unicode support.",
-  "homepage": "https://mths.be/he",
-  "main": "he.js",
-  "bin": "bin/he",
-  "keywords": [
-    "string",
-    "entities",
-    "entity",
-    "html",
-    "encode",
-    "decode",
-    "unicode"
-  ],
-  "license": "MIT",
-  "author": {
-    "name": "Mathias Bynens",
-    "url": "https://mathiasbynens.be/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mathiasbynens/he.git"
-  },
-  "bugs": "https://github.com/mathiasbynens/he/issues",
-  "files": [
-    "LICENSE-MIT.txt",
-    "he.js",
-    "bin/",
-    "man/"
-  ],
-  "directories": {
-    "bin": "bin",
-    "man": "man",
-    "test": "tests"
-  },
-  "scripts": {
-    "test": "node tests/tests.js",
-    "build": "grunt build"
-  },
-  "devDependencies": {
-    "codecov.io": "^0.1.6",
-    "grunt": "^0.4.5",
-    "grunt-cli": "^1.3.1",
-    "grunt-shell": "^1.1.1",
-    "grunt-template": "^0.2.3",
-    "istanbul": "^0.4.2",
-    "jsesc": "^1.0.0",
-    "lodash": "^4.8.2",
-    "qunit-extras": "^1.4.5",
-    "qunitjs": "~1.11.0",
-    "regenerate": "^1.2.1",
-    "regexgen": "^1.3.0",
-    "requirejs": "^2.1.22",
-    "sort-object": "^3.0.2"
-  }
+	"name": "he",
+	"version": "1.2.0",
+	"description": "A robust HTML entities encoder/decoder with full Unicode support.",
+	"keywords": [
+		"decode",
+		"encode",
+		"entities",
+		"entity",
+		"html",
+		"string",
+		"unicode"
+	],
+	"homepage": "https://mths.be/he",
+	"bugs": "https://github.com/mathiasbynens/he/issues",
+	"license": "MIT",
+	"author": {
+		"name": "Mathias Bynens",
+		"url": "https://mathiasbynens.be/"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mathiasbynens/he.git"
+	},
+	"man": "man/he.1",
+	"bin": {
+		"he": "bin/he.mjs"
+	},
+	"files": [
+		"LICENSE-MIT.txt",
+		"src/",
+		"bin/",
+		"man/"
+	],
+	"type": "module",
+	"exports": {
+		".": "./src/he.mjs",
+		"./package.json": "./package.json"
+	},
+	"scripts": {
+		"build": "node scripts/process-data.mjs && node scripts/build.mjs && oxfmt data src/data.mjs",
+		"fetch": "npm run fetch:entities && node scripts/fetch-spec.mjs && npm run build",
+		"fetch:entities": "curl --fail --silent --show-error --location https://html.spec.whatwg.org/entities.json --output data/entities.json && oxfmt data/entities.json",
+		"test": "node --test \"tests/**/*.test.mjs\"",
+		"coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/**\" \"tests/**/*.test.mjs\"",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check"
+	},
+	"devDependencies": {
+		"jsesc": "^3.1.0",
+		"linkedom": "^0.18.13",
+		"oxfmt": "^0.71.0",
+		"regenerate": "^1.4.2"
+	},
+	"engines": {
+		"node": ">=22"
+	}
 }

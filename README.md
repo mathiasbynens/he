@@ -1,4 +1,4 @@
-# he [![Build status](https://travis-ci.org/mathiasbynens/he.svg?branch=master)](https://travis-ci.org/mathiasbynens/he) [![Code coverage status](https://codecov.io/github/mathiasbynens/he/coverage.svg?branch=master)](https://codecov.io/github/mathiasbynens/he?branch=master) [![Dependency status](https://gemnasium.com/mathiasbynens/he.svg)](https://gemnasium.com/mathiasbynens/he)
+# he [![Test status](https://github.com/mathiasbynens/he/actions/workflows/test.yml/badge.svg)](https://github.com/mathiasbynens/he/actions/workflows/test.yml) [![he on npm](https://img.shields.io/npm/v/he)](https://www.npmjs.com/package/he)
 
 _he_ (for “HTML entities”) is a robust HTML entity encoder/decoder written in JavaScript. It supports [all standardized named character references as per HTML](https://html.spec.whatwg.org/multipage/syntax.html#named-character-references), handles [ambiguous ampersands](https://mathiasbynens.be/notes/ambiguous-ampersands) and other edge cases [just like a browser would](https://html.spec.whatwg.org/multipage/syntax.html#tokenizing-character-references), has an extensive test suite, and — contrary to many other JavaScript solutions — _he_ handles astral Unicode symbols just fine. [An online demo is available.](https://mothereff.in/html-entities)
 
@@ -10,57 +10,25 @@ Via [npm](https://www.npmjs.com/):
 npm install he
 ```
 
-Via [Bower](http://bower.io/):
+_he_ is published as an ECMAScript module with named exports:
 
-```bash
-bower install he
+```js
+import { decode, encode, escape, unescape } from 'he';
+// Or, to use the `he.*` style shown in the examples below:
+import * as he from 'he';
 ```
 
-Via [Component](https://github.com/component/component):
-
-```bash
-component install mathiasbynens/he
-```
-
-In a browser:
+In a browser, using a `<script type="module">` and a path to the package’s `src/he.mjs`:
 
 ```html
-<script src="he.js"></script>
+<script type="module">
+	import * as he from './node_modules/he/src/he.mjs';
+</script>
 ```
 
-In [Node.js](https://nodejs.org/), [io.js](https://iojs.org/), [Narwhal](http://narwhaljs.org/), and [RingoJS](http://ringojs.org/):
-
-```js
-var he = require('he');
-```
-
-In [Rhino](http://www.mozilla.org/rhino/):
-
-```js
-load('he.js');
-```
-
-Using an AMD loader like [RequireJS](http://requirejs.org/):
-
-```js
-require(
-  {
-    'paths': {
-      'he': 'path/to/he'
-    }
-  },
-  ['he'],
-  function(he) {
-    console.log(he);
-  }
-);
-```
+In CommonJS code on Node.js versions that support [`require(esm)`](https://nodejs.org/api/modules.html#loading-ecmascript-modules-using-require), `require('he')` returns the module namespace object, so `require('he').encode(…)` works as well.
 
 ## API
-
-### `he.version`
-
-A string representing the semantic version number.
 
 ### `he.encode(text, options)`
 
@@ -95,13 +63,13 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 
 // Passing an `options` object to `encode`, to explicitly disallow named references:
 he.encode('foo © bar ≠ baz 𝌆 qux', {
-  'useNamedReferences': false
+	useNamedReferences: false,
 });
 // → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
 
 // Passing an `options` object to `encode`, to explicitly allow named references:
 he.encode('foo © bar ≠ baz 𝌆 qux', {
-  'useNamedReferences': true
+	useNamedReferences: true,
 });
 // → 'foo &copy; bar &ne; baz &#x1D306; qux'
 ```
@@ -117,20 +85,20 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 
 // Passing an `options` object to `encode`, to explicitly disable decimal escapes:
 he.encode('foo © bar ≠ baz 𝌆 qux', {
-  'decimal': false
+	decimal: false,
 });
 // → 'foo &#xA9; bar &#x2260; baz &#x1D306; qux'
 
 // Passing an `options` object to `encode`, to explicitly enable decimal escapes:
 he.encode('foo © bar ≠ baz 𝌆 qux', {
-  'decimal': true
+	decimal: true,
 });
 // → 'foo &#169; bar &#8800; baz &#119558; qux'
 
 // Passing an `options` object to `encode`, to explicitly allow named references and decimal escapes:
 he.encode('foo © bar ≠ baz 𝌆 qux', {
-  'useNamedReferences': true,
-  'decimal': true
+	useNamedReferences: true,
+	decimal: true,
 });
 // → 'foo &copy; bar &ne; baz &#119558; qux'
 ```
@@ -146,14 +114,14 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 
 // Passing an `options` object to `encode`, to explicitly encode all symbols:
 he.encode('foo © bar ≠ baz 𝌆 qux', {
-  'encodeEverything': true
+	encodeEverything: true,
 });
 // → '&#x66;&#x6F;&#x6F;&#x20;&#xA9;&#x20;&#x62;&#x61;&#x72;&#x20;&#x2260;&#x20;&#x62;&#x61;&#x7A;&#x20;&#x1D306;&#x20;&#x71;&#x75;&#x78;'
 
 // This setting can be combined with the `useNamedReferences` option:
 he.encode('foo © bar ≠ baz 𝌆 qux', {
-  'encodeEverything': true,
-  'useNamedReferences': true
+	encodeEverything: true,
+	useNamedReferences: true,
 });
 // → '&#x66;&#x6F;&#x6F;&#x20;&copy;&#x20;&#x62;&#x61;&#x72;&#x20;&ne;&#x20;&#x62;&#x61;&#x7A;&#x20;&#x1D306;&#x20;&#x71;&#x75;&#x78;'
 ```
@@ -169,13 +137,13 @@ he.encode('\x01');
 
 // Passing an `options` object to `encode`, to explicitly enable error-tolerant mode:
 he.encode('\x01', {
-  'strict': false
+	strict: false,
 });
 // → '&#x1;'
 
 // Passing an `options` object to `encode`, to explicitly enable strict mode:
 he.encode('\x01', {
-  'strict': true
+	strict: true,
 });
 // → Parse error
 ```
@@ -186,7 +154,7 @@ The default value for the `allowUnsafeSymbols` option is `false`. This means tha
 
 ```js
 he.encode('foo © and & ampersand', {
-  'allowUnsafeSymbols': true
+	allowUnsafeSymbols: true,
 });
 // → 'foo &#xA9; and & ampersand'
 ```
@@ -230,13 +198,13 @@ he.decode('foo&ampbar');
 
 // Passing an `options` object to `decode`, to explicitly assume an HTML text context:
 he.decode('foo&ampbar', {
-  'isAttributeValue': false
+	isAttributeValue: false,
 });
 // → 'foo&bar'
 
 // Passing an `options` object to `decode`, to explicitly assume an HTML attribute value context:
 he.decode('foo&ampbar', {
-  'isAttributeValue': true
+	isAttributeValue: true,
 });
 // → 'foo&ampbar'
 ```
@@ -252,13 +220,13 @@ he.decode('foo&ampbar');
 
 // Passing an `options` object to `decode`, to explicitly enable error-tolerant mode:
 he.decode('foo&ampbar', {
-  'strict': false
+	strict: false,
 });
 // → 'foo&bar'
 
 // Passing an `options` object to `decode`, to explicitly enable strict mode:
 he.decode('foo&ampbar', {
-  'strict': true
+	strict: true,
 });
 // → Parse error
 ```
@@ -342,27 +310,17 @@ See `he --help` for the full list of options.
 
 ## Support
 
-_he_ has been tested in at least:
+_he_ is an ES2022 module. It works in all modern browsers and in Node.js v22+. The CLI requires Node.js v22+.
 
-* Chrome 27-50
-* Firefox 3-45
-* Safari 4-9
-* Opera 10-12, 15–37
-* IE 6–11
-* Edge
-* Narwhal 0.3.2
-* Node.js v0.10, v0.12, v4, v5
-* PhantomJS 1.9.0
-* Rhino 1.7RC4
-* RingoJS 0.8-0.11
+## Development
 
-## Unit tests & code coverage
+After cloning this repository, run `npm install` to install the development dependencies.
 
-After cloning this repository, run `npm install` to install the dependencies needed for he development and testing. You may want to install Istanbul _globally_ using `npm install istanbul -g`.
-
-Once that’s done, you can run the unit tests in Node using `npm test` or `node tests/tests.js`. To run the tests in Rhino, Ringo, Narwhal, and web browsers as well, use `grunt test`.
-
-To generate the code coverage report, use `grunt cover`.
+- `npm test` runs the test suite using the built-in Node.js test runner.
+- `npm run coverage` prints a code coverage report.
+- `npm run build` regenerates `data/*.json` from `data/entities.json` and writes the generated `src/data.mjs` module, which `src/he.mjs` imports.
+- `npm run fetch` downloads the latest `entities.json`, derives the invalid code points and character reference overrides from the HTML and Infra Standards, and rebuilds. If the relevant spec prose changes, `scripts/fetch-spec.mjs` fails with an explanation instead of writing data.
+- `npm run format` formats the code using [Oxfmt](https://oxc.rs/docs/guide/usage/formatter); `npm run format:check` verifies formatting.
 
 ## Acknowledgements
 
@@ -370,9 +328,9 @@ Thanks to [Simon Pieters](https://simon.html5.org/) ([@zcorpan](https://twitter.
 
 ## Author
 
-| [![twitter/mathias](https://gravatar.com/avatar/24e08a9ea84deb17ae121074d0f17125?s=70)](https://twitter.com/mathias "Follow @mathias on Twitter") |
-|---|
-| [Mathias Bynens](https://mathiasbynens.be/) |
+| [![twitter/mathias](https://gravatar.com/avatar/24e08a9ea84deb17ae121074d0f17125?s=70)](https://twitter.com/mathias 'Follow @mathias on Twitter') |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Mathias Bynens](https://mathiasbynens.be/)                                                                                                       |
 
 ## License
 
