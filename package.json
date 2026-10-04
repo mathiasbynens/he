@@ -1,9 +1,10 @@
 {
   "name": "he",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A robust HTML entities encoder/decoder with full Unicode support.",
   "homepage": "https://mths.be/he",
   "main": "he.js",
+  "module": "he.esm.js",
   "bin": "bin/he",
   "keywords": [
     "string",
@@ -27,6 +28,7 @@
   "files": [
     "LICENSE-MIT.txt",
     "he.js",
+    "he.esm.js",
     "bin/",
     "man/"
   ],
