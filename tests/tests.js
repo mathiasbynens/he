@@ -6040,6 +6040,26 @@
 			Error,
 			'Parse error: ambiguous ampersand in strict mode'
 		);
+		raises(
+			function() {
+				he.decode('&abc;', {
+					'strict': true
+				});
+			},
+			/named character reference was not recognized/,
+			'An ambiguous ampersand that already has a semicolon should not ' +
+				'blame a missing semicolon (see issue #51)'
+		);
+		raises(
+			function() {
+				he.decode('&amp', {
+					'strict': true
+				});
+			},
+			/named character reference was not terminated by a semicolon/,
+			'A recognized legacy reference missing its semicolon keeps the ' +
+				'semicolon-specific message'
+		);
 		equal(
 			he.decode('&notin; &noti &notin &copy123'),
 			'\u2209 \xACi \xACin \xA9123',
