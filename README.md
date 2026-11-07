@@ -1,6 +1,6 @@
 # he [![Test status](https://github.com/mathiasbynens/he/actions/workflows/test.yml/badge.svg)](https://github.com/mathiasbynens/he/actions/workflows/test.yml) [![he on npm](https://img.shields.io/npm/v/he)](https://www.npmjs.com/package/he)
 
-_he_ (for “HTML entities”) is a robust HTML entity encoder/decoder written in JavaScript. It supports [all standardized named character references as per HTML](https://html.spec.whatwg.org/multipage/syntax.html#named-character-references), handles [ambiguous ampersands](https://mathiasbynens.be/notes/ambiguous-ampersands) and other edge cases [just like a browser would](https://html.spec.whatwg.org/multipage/syntax.html#tokenizing-character-references), has an extensive test suite, and — contrary to many other JavaScript solutions — _he_ handles astral Unicode symbols just fine. [An online demo is available.](https://mothereff.in/html-entities)
+_he_ (for “HTML entities”) is a robust HTML entity encoder/decoder written in JavaScript. It supports [all standardized named character references as per HTML](https://html.spec.whatwg.org/multipage/syntax.html#named-character-references), handles [ambiguous ampersands](https://mathiasbynens.be/notes/ambiguous-ampersands) and other edge cases [just like a browser would](https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state), has an extensive test suite, and — contrary to many other JavaScript solutions — _he_ handles astral Unicode symbols just fine. [An online demo is available.](https://mothereff.in/html-entities)
 
 ## Installation
 
@@ -178,7 +178,7 @@ he.encode('foo © bar ≠ baz 𝌆 qux');
 
 ### `he.decode(html, options)`
 
-This function takes a string of HTML and decodes any named and numerical character references in it using [the algorithm described in section 12.2.4.69 of the HTML spec](https://html.spec.whatwg.org/multipage/syntax.html#tokenizing-character-references).
+This function takes a string of HTML and decodes any named and numerical character references in it using [the HTML Standard’s character reference parsing rules](https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state).
 
 ```js
 he.decode('foo &copy; bar &ne; baz &#x1D306; qux');
@@ -211,7 +211,7 @@ he.decode('foo&ampbar', {
 
 #### `strict`
 
-The default value for the `strict` option is `false`. This means that `decode()` will decode any HTML text content you feed it, even if it contains any entities that cause [parse errors](https://html.spec.whatwg.org/multipage/syntax.html#tokenizing-character-references). To throw an error when such invalid HTML is encountered, set the `strict` option to `true`. This option makes it possible to use _he_ as part of HTML parsers and HTML validators.
+The default value for the `strict` option is `false`. This means that `decode()` will decode any HTML text content you feed it, even if it contains any entities that cause [parse errors](https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state). To throw an error when such invalid HTML is encountered, set the `strict` option to `true`. This option makes it possible to use _he_ as part of HTML parsers and HTML validators.
 
 ```js
 // Using the global default setting (defaults to `false`, i.e. error-tolerant mode):
