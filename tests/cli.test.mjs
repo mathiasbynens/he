@@ -22,6 +22,50 @@ const run = (args, input = '') => {
 	});
 };
 
+// Supply exact Buffer boundaries instead of depending on how an OS pipe batches writes.
+const runWithChunks = (args, chunks) => {
+	const program = `
+		import { Readable } from 'node:stream';
+		Object.defineProperty(process, 'stdin', {
+			value: Readable.from(${JSON.stringify(chunks)}.map(chunk => Buffer.from(chunk)))
+		});
+		process.argv = [process.execPath, ${JSON.stringify(binPath)}, ...${JSON.stringify(args)}];
+		await import(${JSON.stringify(new URL('../bin/he.mjs', import.meta.url).href)});
+	`;
+	return new Promise((resolve) => {
+		execFile(
+			process.execPath,
+			['--input-type=module', '--eval', program],
+			(error, stdout) => {
+				resolve({ code: error ? error.code : 0, stdout });
+			},
+		);
+	});
+};
+
+for (const [action, expected] of [
+	['--decode', 'A©€𝌆B\n'],
+	['--encode', 'A&#xA9;&#x20AC;&#x1D306;B\n'],
+	['--escape', 'A©€𝌆B\n'],
+]) {
+	test(`cli: ${action} preserves UTF-8 across stdin chunks`, async () => {
+		const bytes = Buffer.from('A©€𝌆B');
+		for (let split = 1; split < bytes.length; split++) {
+			const chunks = [
+				Array.from(bytes.subarray(0, split)),
+				Array.from(bytes.subarray(split)),
+			];
+			const { code, stdout } = await runWithChunks([action], chunks);
+			assert.equal(code, 0);
+			assert.equal(stdout, expected, `split at byte ${split}`);
+		}
+		const chunks = Array.from(bytes, (byte) => [byte]);
+		const { code, stdout } = await runWithChunks([action], chunks);
+		assert.equal(code, 0);
+		assert.equal(stdout, expected, 'one byte per chunk');
+	});
+}
+
 // Note: when stdin is not a TTY, the CLI appends the (trimmed) piped input as
 // an extra string argument. With empty input, that yields an extra empty line.
 
