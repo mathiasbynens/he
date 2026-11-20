@@ -193,14 +193,11 @@ const decode = (html, options) => {
 
 		if ($2) {
 			// Decode named character references without trailing `;`, e.g. `&amp`.
-			// This is only a parse error if it gets converted to `&`, or if it is
-			// followed by `=` in an attribute context.
+			// In attribute values, leave references followed by an ASCII
+			// alphanumeric character or `=` unchanged, even in strict mode.
 			const reference = $2;
 			const next = $3;
 			if (next && options.isAttributeValue) {
-				if (strict && next == '=') {
-					parseError('`&` did not start a character reference');
-				}
 				return $0;
 			}
 			if (strict) {

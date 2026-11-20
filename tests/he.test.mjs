@@ -5946,6 +5946,26 @@ const encodeData = [
 	},
 ];
 
+test('legacy references followed by equals signs in attribute values', () => {
+	for (const input of ['guitar?pedal=foo&amp=bar', '&copy=1', '&not=2']) {
+		assert.equal(
+			he.decode(input, { isAttributeValue: true, strict: true }),
+			input,
+		);
+		assert.throws(
+			() => he.decode(input, { strict: true }),
+			/named character reference was not terminated by a semicolon/,
+		);
+	}
+	assert.equal(
+		he.decode('guitar?pedal=foo&amp;=bar', {
+			isAttributeValue: true,
+			strict: true,
+		}),
+		'guitar?pedal=foo&=bar',
+	);
+});
+
 test('decode', () => {
 	for (const [key, value] of Object.entries(officialData)) {
 		const encoded = 'a ' + key + ' b';
@@ -6130,15 +6150,13 @@ test('decode', () => {
 	);
 	he.decode.options.isAttributeValue = true;
 	assert.equal(he.decode('foo&amp='), 'foo&amp=', 'Attribute value context');
-	assert.throws(
-		() => {
-			he.decode('foo&amp=', {
-				strict: true,
-				// 'isAttributeValue': true is set globally
-			});
-		},
-		Error,
-		'Parse error: `foo&amp=` in attribute value context in strict mode',
+	assert.equal(
+		he.decode('foo&amp=', {
+			strict: true,
+			// 'isAttributeValue': true is set globally
+		}),
+		'foo&amp=',
+		'No parse error: `foo&amp=` in attribute value context in strict mode',
 	);
 	he.decode.options.isAttributeValue = false;
 	assert.equal(
@@ -6155,9 +6173,8 @@ test('decode', () => {
 		}),
 		'foo&amplol',
 		'Attribute value context (not a parsing error!)',
-		// E.g. `&amp` is only a parse error if it gets converted to `&` or if it
-		// is followed by `=` in an attribute.
-		// http://krijnhoetmer.nl/irc-logs/whatwg/20130701#l-249
+		// A legacy reference followed by an ASCII alphanumeric character or
+		// `=` is left unchanged in attribute values, even in strict mode.
 	);
 	assert.throws(
 		() => {
