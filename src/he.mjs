@@ -80,8 +80,16 @@ const codePointToSymbol = (codePoint, strict) => {
 	return String.fromCodePoint(codePoint);
 };
 
+const hexDigits = '0123456789ABCDEF';
 const hexEscape = (codePoint) => {
-	return `&#x${codePoint.toString(16).toUpperCase()};`;
+	// Equivalent to `codePoint.toString(16).toUpperCase()`, but faster, since
+	// it avoids creating an intermediate lowercase string.
+	let hex = '';
+	do {
+		hex = hexDigits[codePoint & 0xf] + hex;
+		codePoint >>>= 4;
+	} while (codePoint);
+	return `&#x${hex};`;
 };
 
 const decEscape = (codePoint) => {
