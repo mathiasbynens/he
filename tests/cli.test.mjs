@@ -37,6 +37,27 @@ test('cli: --decode via stdin', async () => {
 	assert.equal(stdout, '\u00A9 \uD834\uDF06\n');
 });
 
+test('cli: stdin decodes UTF-8 across chunk boundaries', async () => {
+	const script = `
+		import { Readable } from 'node:stream';
+		const bytes = Buffer.from('\u00A9\uD834\uDF06');
+		Object.defineProperty(process, 'stdin', {
+			value: Readable.from([...bytes].map((byte) => Buffer.from([byte]))),
+		});
+		process.argv = [process.execPath, 'he', '--encode'];
+		await import(${JSON.stringify(binPath)});
+	`;
+	const { code, stdout } = await new Promise((resolve) => {
+		execFile(
+			process.execPath,
+			['--input-type=module', '--eval', script],
+			(error, stdout) => resolve({ code: error ? error.code : 0, stdout }),
+		);
+	});
+	assert.equal(code, 0);
+	assert.equal(stdout, '&#xA9;&#x1D306;\n');
+});
+
 test('cli: --encode with flags', async () => {
 	const { code, stdout } = await run(
 		['--use-named-refs', '--decimal'],

@@ -153,6 +153,7 @@ if (stdin.isTTY) {
 		}, 60_000);
 	}
 	let data = '';
+	stdin.setEncoding('utf8');
 	stdin.on('data', (chunk) => {
 		clearTimeout(timeout);
 		data += chunk;
